@@ -1,0 +1,10 @@
+UPDATED:
+- pubspec.yaml
+- lib/services/project_persistence_web.dart
+
+REMOVED BY APPLY_FIX.bat:
+- web/lib
+- web/test
+
+The web/lib and web/test folders are accidental duplicate Flutter source folders.
+The real application source belongs only in the root lib and test folders.
