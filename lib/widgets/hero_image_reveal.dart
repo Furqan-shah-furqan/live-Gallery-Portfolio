@@ -92,24 +92,48 @@ class _HeroImageRevealState extends State<HeroImageReveal>
     if (!mounted || _unavailable) return;
 
     if (!_everInteracted && _loaded) {
-      // Autonomous attractor drift until the visitor first interacts.
+      // Autonomous attractor drift until the visitor first interacts —
+      // capped so idle mobile devices are not painting forever.
       final t = _clock.elapsedMicroseconds / 1e6;
-      _targetCenter = Offset(
-        _size.width * (0.5 + 0.30 * math.sin(t * 0.55)),
-        _size.height * (0.42 + 0.30 * math.cos(t * 0.42)),
-      );
-      _center ??= _targetCenter;
-      _targetReveal = _maxReveal * (0.55 + 0.38 * math.sin(t * 0.33));
+      if (t < 12) {
+        _targetCenter = Offset(
+          _size.width * (0.5 + 0.30 * math.sin(t * 0.55)),
+          _size.height * (0.42 + 0.30 * math.cos(t * 0.42)),
+        );
+        _center ??= _targetCenter;
+        _targetReveal = _maxReveal * (0.55 + 0.38 * math.sin(t * 0.33));
+      }
     } else if (_clock.elapsed - _lastMove > const Duration(milliseconds: 2600)) {
-      // Idle: gently heal the reveal back to the untouched blue plate.
+      // Idle: heal the reveal back to the untouched blue plate and relax
+      // the kinetic grid by easing the cursor influence off-panel.
       _targetReveal = ui.lerpDouble(_targetReveal, 0, 0.035)!;
+      _targetCenter = Offset(
+        _size.width + 200,
+        _size.height + 200,
+      );
     }
 
-    _center = _center == null
+    final nextCenter = _center == null
         ? _targetCenter
         : Offset.lerp(_center, _targetCenter, 0.22);
-    _reveal = ui.lerpDouble(_reveal, _targetReveal, 0.16)!;
-    setState(() {});
+    final nextReveal = ui.lerpDouble(_reveal, _targetReveal, 0.16)!;
+
+    // CPU idle guard: once fully settled, stop repainting every frame.
+    final c0 = _center;
+    final c1 = nextCenter;
+    final double centerDelta;
+    if (c0 == null || c1 == null) {
+      centerDelta = 1.0;
+    } else {
+      centerDelta = (c1 - c0).distance;
+    }
+    final revealDelta = (nextReveal - _reveal).abs();
+    if (!_everInteracted || centerDelta > 0.4 || revealDelta > 0.4) {
+      setState(() {
+        _center = nextCenter;
+        _reveal = nextReveal;
+      });
+    }
   }
 
   void _pointTo(Offset local, double growth) {
@@ -128,7 +152,9 @@ class _HeroImageRevealState extends State<HeroImageReveal>
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: _unavailable
+          child: Semantics(
+            label: 'Hero layered artwork with kinetic grid reveal',
+            child: _unavailable
               ? const _FallbackPlate()
               : Stack(
                   fit: StackFit.expand,
@@ -139,6 +165,17 @@ class _HeroImageRevealState extends State<HeroImageReveal>
                           layers: _layers,
                           center: _center,
                           reveal: _reveal,
+                        ),
+                      ),
+                    ),
+                    // Kinetic cursor grid: a warped mesh that displaces away
+                    // from the cursor, bending over the layered plates.
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: RepaintBoundary(
+                          child: CustomPaint(
+                            painter: _KineticGridPainter(cursor: _center),
+                          ),
                         ),
                       ),
                     ),
@@ -186,10 +223,70 @@ class _HeroImageRevealState extends State<HeroImageReveal>
                       ),
                   ],
                 ),
+          ),
         );
       },
     );
   }
+}
+
+/// Kinetic mesh overlay: thin grid lines whose vertices are displaced away
+/// from the cursor with a smooth radial falloff. Single 1px-stroke path per
+/// frame — GPU friendly, no blur, no glow, confined to the hero panel.
+class _KineticGridPainter extends CustomPainter {
+  _KineticGridPainter({required this.cursor});
+
+  final Offset? cursor;
+
+  static const double _cell = 26.0;
+  static const double _radius = 150.0;
+  static const double _strength = 16.0;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0x1A121417)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    Offset warp(Offset p) {
+      final c = cursor;
+      if (c == null) return p;
+      final v = p - c;
+      final d = v.distance;
+      if (d >= _radius || d < 0.001) return p;
+      final falloff = math.pow(1 - d / _radius, 1.6).toDouble();
+      return p + (v / d) * (falloff * _strength);
+    }
+
+    final path = Path();
+
+    // Vertical strands.
+    for (double x = 0; x <= size.width + _cell; x += _cell) {
+      final cx = math.min(x, size.width);
+      path.moveTo(cx, 0);
+      for (double y = _cell; y <= size.height + _cell; y += _cell) {
+        path.lineTo(warp(Offset(cx, math.min(y, size.height))).dx,
+            warp(Offset(cx, math.min(y, size.height))).dy);
+      }
+    }
+
+    // Horizontal strands.
+    for (double y = 0; y <= size.height + _cell; y += _cell) {
+      final cy = math.min(y, size.height);
+      path.moveTo(0, cy);
+      for (double x = _cell; x <= size.width + _cell; x += _cell) {
+        final p = warp(Offset(math.min(x, size.width), cy));
+        path.lineTo(p.dx, p.dy);
+      }
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _KineticGridPainter oldDelegate) =>
+      oldDelegate.cursor != cursor;
 }
 
 /// Paints the three plates: full sand base, red masked by the small reveal
