@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../core/aura_bento.dart';
-import '../models/project_model.dart';
 import 'glass_surface.dart';
+import 'hero_image_reveal.dart';
 
 /// Aura-Bento hero: a large white squircle module (radius-xl) floating on the
 /// aura canvas, pairing a serif conversational headline with sans interface
-/// chrome, a black action anchor, and a dark HUD step tracker (§4.5).
+/// chrome, a black action anchor, and a layered cursor-reveal artwork panel.
 class HeroCutoutLayout extends StatefulWidget {
   const HeroCutoutLayout({
     super.key,
     required this.projectCount,
-    required this.latestProject,
     required this.role,
     required this.onProjects,
     required this.onAdmin,
@@ -20,7 +19,6 @@ class HeroCutoutLayout extends StatefulWidget {
   });
 
   final int projectCount;
-  final ProjectModel? latestProject;
   final String role;
   final VoidCallback onProjects;
   final VoidCallback onAdmin;
@@ -70,6 +68,11 @@ class _HeroCutoutLayoutState extends State<HeroCutoutLayout> {
                     ),
                   ),
                 ),
+                // Layered cursor-reveal artwork panel (desktop hover + touch
+                // drag; renders a flat plate until the hero assets ship).
+                const Positioned.fill(
+                  child: HeroImageReveal(),
+                ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(
                     isDesktop ? AuraBento.space8 : AuraBento.space5,
@@ -85,7 +88,9 @@ class _HeroCutoutLayoutState extends State<HeroCutoutLayout> {
                         onAdmin: widget.onAdmin,
                         projectCount: widget.projectCount,
                       ),
-                      const Spacer(),
+                      // Vertically centered copy block between the top bar
+                      // and the bottom of the hero module.
+                      const Spacer(flex: 4),
                       _HeroCopy(
                         role: widget.role,
                         projectCount: widget.projectCount,
@@ -93,11 +98,7 @@ class _HeroCutoutLayoutState extends State<HeroCutoutLayout> {
                         onAdmin: widget.onAdmin,
                         isDesktop: isDesktop,
                       ),
-                      const SizedBox(height: AuraBento.space6),
-                      _HeroHud(
-                        projectCount: widget.projectCount,
-                        latestProject: widget.latestProject,
-                      ),
+                      const Spacer(flex: 5),
                     ],
                   ),
                 ),
@@ -299,82 +300,3 @@ class _HeroCopy extends StatelessWidget {
 }
 
 /// §4.5 Dark HUD live tracker embedded at the bottom of the hero module.
-class _HeroHud extends StatelessWidget {
-  const _HeroHud({
-    required this.projectCount,
-    required this.latestProject,
-  });
-
-  final int projectCount;
-  final ProjectModel? latestProject;
-
-  @override
-  Widget build(BuildContext context) {
-    final latest = _latestLabel();
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AuraBento.space5,
-        vertical: AuraBento.space4,
-      ),
-      decoration: BoxDecoration(
-        color: AuraBento.surfaceDarkHud,
-        borderRadius: BorderRadius.circular(AuraBento.radiusLg),
-        boxShadow: AuraBento.ambientMd(Colors.black),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final wide = constraints.maxWidth >= 640;
-          final hud = AuraHudTracker(
-            steps: const <String>['Design', 'Build', 'Ship', 'Live'],
-            activeIndex: projectCount > 0 ? 3 : 1,
-          );
-
-          if (!wide) return hud;
-
-          return Row(
-            children: <Widget>[
-              Expanded(
-                flex: 5,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      latest,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AuraBento.textInverted,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'Live tracker · gallery systems',
-                      style: TextStyle(
-                        color: Color(0x99FFFFFF),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AuraBento.space5),
-              Expanded(
-                flex: 6,
-                child: hud,
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  String _latestLabel() {
-    final project = latestProject;
-    if (project == null) return 'No systems yet';
-    return project.name;
-  }
-}

@@ -600,16 +600,7 @@ class _LiquidGooeyButtonState extends State<LiquidGooeyButton>
               border: isPrimary
                   ? null
                   : Border.all(color: AuraBento.surfacePillNeutralSolid),
-              boxShadow: isPrimary || _hovered
-                  ? <BoxShadow>[
-                      BoxShadow(
-                        color: const Color(0xFF111827)
-                            .withAlpha(_hovered ? 42 : 28),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ]
-                  : const <BoxShadow>[],
+              // Flat button treatment: no box shadow on the pill states.
             ),
             child: Stack(
               clipBehavior: Clip.none,
@@ -627,15 +618,9 @@ class _LiquidGooeyButtonState extends State<LiquidGooeyButton>
                         return Container(
                           width: 8 + wave * 2,
                           height: 8 + wave * 2,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AuraBento.accentBlueAction.withAlpha(204),
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                color: AuraBento.accentBlueAction,
-                                blurRadius: 8,
-                              ),
-                            ],
+                            color: AuraBento.accentBlueAction,
                           ),
                         );
                       },
@@ -1428,22 +1413,13 @@ class _LiquidDockItemState extends State<_LiquidDockItem> {
             curve: Curves.easeOutCubic,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
             decoration: BoxDecoration(
-              // Active tab: black anchor pill (§1.1 high-contrast anchor).
+              // Active tab: flat black anchor pill — no drop shadow.
               color: widget.active
                   ? AuraBento.accentDarkAction
                   : (_hovered
                       ? AuraBento.surfacePillNeutral
                       : Colors.transparent),
               borderRadius: BorderRadius.circular(AuraBento.radiusFull),
-              boxShadow: widget.active
-                  ? <BoxShadow>[
-                      BoxShadow(
-                        color: const Color(0xFF111827).withAlpha(46),
-                        blurRadius: 14,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : null,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

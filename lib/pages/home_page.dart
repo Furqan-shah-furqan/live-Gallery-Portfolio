@@ -80,7 +80,6 @@ class _HomePageState extends State<HomePage> {
                             builder: (context, roleIndex, _) {
                               return _HeroSection(
                                 projectCount: store.count,
-                                latestProject: store.latestProject,
                                 role: _roles[roleIndex],
                                 onProjects: () => _openProjects(context),
                                 onAdmin: () => _openAdmin(context),
@@ -173,7 +172,6 @@ class _HomePageState extends State<HomePage> {
 class _HeroSection extends StatelessWidget {
   const _HeroSection({
     required this.projectCount,
-    required this.latestProject,
     required this.role,
     required this.onProjects,
     required this.onAdmin,
@@ -182,7 +180,6 @@ class _HeroSection extends StatelessWidget {
   });
 
   final int projectCount;
-  final ProjectModel? latestProject;
   final String role;
   final VoidCallback onProjects;
   final VoidCallback onAdmin;
@@ -195,7 +192,6 @@ class _HeroSection extends StatelessWidget {
       delay: const Duration(milliseconds: 90),
       child: HeroCutoutLayout(
         projectCount: projectCount,
-        latestProject: latestProject,
         role: role,
         onProjects: onProjects,
         onAdmin: onAdmin,
