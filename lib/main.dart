@@ -11,9 +11,25 @@ import 'services/project_store.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final store = ProjectStore();
-  await store.load();
   final themeController = ThemeController();
-  await themeController.load();
+
+  // Both loads are backed by browser storage (IndexedDB via idb_shim and
+  // localStorage via shared_preferences). On the web that access can fail —
+  // blocked site data, private browsing, or IndexedDB denial — and an await
+  // that throws here would prevent runApp() entirely, leaving a blank white
+  // page. Each load is therefore isolated: the app always boots, falls back
+  // to the empty project list and the default palette, and logs the reason.
+  try {
+    await store.load();
+  } catch (error) {
+    debugPrint('Project storage unavailable at startup: $error');
+  }
+  try {
+    await themeController.load();
+  } catch (error) {
+    debugPrint('Theme storage unavailable at startup: $error');
+  }
+
   runApp(
     LiveSystemsApp(
       store: store,
