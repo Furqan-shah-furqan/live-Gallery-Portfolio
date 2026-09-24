@@ -114,8 +114,8 @@ class GlassSurface extends StatelessWidget {
   }
 }
 
-/// §4.4 Pill Action Button — height 48, full pill radius, black-anchor or
-/// aurora-gradient variant, 14px bold white label, leading icon.
+/// §4.4 Pill Action Button — height 48, full pill radius, flat black-anchor
+/// variant (no gradient, no box shadow), 14px bold white label, leading icon.
 class PremiumButton extends StatefulWidget {
   const PremiumButton({
     super.key,
@@ -158,33 +158,27 @@ class _PremiumButtonState extends State<PremiumButton> {
       foreground = AppColors.danger;
       gradient = null;
     } else if (widget.primary) {
-      background = Colors.transparent;
+      // §4.4 Black Anchor pill: flat solid black — no gradient, no glow.
+      background =
+          _hovered ? const Color(0xFF000000) : AuraBento.accentDarkAction;
       foreground = AuraBento.textInverted;
-      gradient = const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: AuraBento.auroraCta,
-      );
+      gradient = null;
     } else {
       background = _hovered ? AuraBento.surfaceCardMuted : AuraBento.surfaceWhite;
       foreground = scheme.onSurface;
       gradient = null;
     }
 
-    final shadows = <BoxShadow>[
-      if (widget.primary)
-        BoxShadow(
-          color: scheme.primary.withAlpha(_hovered ? 96 : 66),
-          blurRadius: 18,
-          offset: const Offset(0, 6),
-        )
-      else
-        BoxShadow(
-          color: const Color(0xFF111827).withAlpha(_hovered ? 22 : 12),
-          blurRadius: 20,
-          offset: const Offset(0, 8),
-        ),
-    ];
+    // Flat button treatment: the black action pills carry no box shadow.
+    final shadows = widget.primary
+        ? const <BoxShadow>[]
+        : <BoxShadow>[
+            BoxShadow(
+              color: const Color(0xFF111827).withAlpha(_hovered ? 22 : 12),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ];
 
     final child = Material(
       color: Colors.transparent,
@@ -390,9 +384,12 @@ class AuraCircularToken extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: bg,
+            // Flat black action tokens: no drop shadow (flat button spec).
             boxShadow: variant == AuraCircularTokenVariant.pureWhite
                 ? AuraBento.ambientMd(const Color(0xFF111827))
-                : AuraBento.capsuleLift,
+                : variant == AuraCircularTokenVariant.glassNeutral
+                    ? AuraBento.capsuleLift
+                    : const <BoxShadow>[],
           ),
           child: Icon(icon, color: fg, size: size * 0.42),
         ),
