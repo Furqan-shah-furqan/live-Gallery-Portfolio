@@ -67,12 +67,12 @@ flutter build web --release
 
 ## Deploy to Vercel
 
-Vercel has no native Flutter support, so by default it produces no static site at all — that is why the live deployment 404s. The full pipeline is now pinned in [`vercel.json`](vercel.json):
+Vercel has no native Flutter support, so by default it produces no static site at all. The pipeline is pinned in [`vercel.json`](vercel.json):
 
-- **Install command**: `sh ./scripts/build_web.sh install` — downloads a pinned Flutter SDK (default `3.24.5`, override with the `FLUTTER_VERSION` env var)
-- **Build command**: `sh ./scripts/build_web.sh build` — runs `flutter pub get` + `flutter build web --release`
+- **Build command**: `bash ./scripts/build_web.sh` — a self-contained script that downloads Flutter 3.24.5 (cached at `/tmp/flutter_sdk` inside the build container), runs `flutter pub get`, and builds `flutter build web --release --base-href /`
 - **Output directory**: `build/web` (static)
+- **`cleanUrls` + SPA rewrite**: every path resolves to `index.html` (harmless for this single-entry Flutter app)
 
-`vercel.json` overrides any framework preset or build settings chosen in the Vercel dashboard, so no settings changes are needed: commit and redeploy from the Vercel dashboard (or run `vercel --prod`). The app is a single-entry Flutter app (no client-side routing), so no SPA rewrites are configured.
+`vercel.json` overrides any framework preset or build settings chosen in the Vercel dashboard, so no settings changes are needed: commit and redeploy from the Vercel dashboard (or run `vercel --prod`).
 
 Screenshots are converted to Base64 and saved locally. For a production portfolio with many large screenshots, move image storage to Supabase Storage or another hosted file service.
