@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'aura_bento.dart';
+
 enum PortfolioThemeId {
-  coralOriginal,
-  warmPlum,
-  tealSand,
-  forestMist,
-  burgundyCoffee,
-  roseCocoa,
+  auraSunset,
+  auroraPeriwinkle,
+  porcelainMist,
+  sageAtmosphere,
+  emberEmber,
+  duskLavender,
 }
 
+/// A palette-adapted view of the Aura-Bento token set. Every palette keeps
+/// the same structural tokens (canvas, white surfaces, ink) and only swaps
+/// the two aura mesh hues plus the accent anchors, so contrast ratios and
+/// the concentric radius system stay intact across themes.
 @immutable
 class PortfolioPalette {
   const PortfolioPalette({
@@ -31,13 +37,23 @@ class PortfolioPalette {
   final PortfolioThemeId id;
   final String name;
   final String description;
+
+  /// Swatch strip shown in the Theme Studio preview card.
   final List<Color> colors;
+
+  /// Aura mesh endpoints rendered behind the app.
   final Color backgroundStart;
   final Color backgroundEnd;
+
+  /// White card surface (kept #FFFFFF for token fidelity).
   final Color surface;
   final Color surfaceAlt;
+
+  /// Deep neutral anchor for typography (#121417 or near-black).
   final Color ink;
   final Color muted;
+
+  /// Accent anchor for CTAs / active states.
   final Color primary;
   final Color secondary;
   final Color tertiary;
@@ -45,140 +61,144 @@ class PortfolioPalette {
 
 const List<PortfolioPalette> portfolioPalettes = <PortfolioPalette>[
   PortfolioPalette(
-    id: PortfolioThemeId.coralOriginal,
-    name: 'Original Coral',
-    description: 'The existing warm coral portfolio theme.',
+    id: PortfolioThemeId.auraSunset,
+    name: 'Aura Sunset',
+    description:
+        'The canonical Aura-Bento look: peach-periwinkle aura on the neutral #E9EBEF canvas.',
     colors: <Color>[
-      Color(0xFFFFFCFA),
-      Color(0xFFFFE8E5),
-      Color(0xFFFFA15A),
-      Color(0xFFFF6B70),
-      Color(0xFFF43E70),
-      Color(0xFF2B1722),
+      Color(0xFFFFC896),
+      Color(0xFFFF9A7B),
+      Color(0xFFFFA877),
+      Color(0xFF6875F5),
+      Color(0xFF2A85FF),
+      Color(0xFF121417),
     ],
-    backgroundStart: Color(0xFFFFB35F),
-    backgroundEnd: Color(0xFFE93368),
-    surface: Color(0xFFFFFCFA),
-    surfaceAlt: Color(0xFFFFE8E5),
-    ink: Color(0xFF2B1722),
-    muted: Color(0xFF7D5964),
-    primary: Color(0xFFF43E70),
-    secondary: Color(0xFFFFA15A),
-    tertiary: Color(0xFFFFD16E),
+    backgroundStart: Color(0xFFFFC896),
+    backgroundEnd: Color(0xFFB4BEFF),
+    surface: AuraBento.surfaceWhite,
+    surfaceAlt: AuraBento.surfaceCardMuted,
+    ink: AuraBento.textPrimary,
+    muted: AuraBento.textSecondary,
+    primary: AuraBento.accentBlueAction,
+    secondary: AuraBento.accentOrange,
+    tertiary: Color(0xFF6E56CF),
   ),
   PortfolioPalette(
-    id: PortfolioThemeId.warmPlum,
-    name: 'Warm Plum',
-    description: 'Soft peach surfaces with rich plum depth.',
+    id: PortfolioThemeId.auroraPeriwinkle,
+    name: 'Aurora Periwinkle',
+    description: 'Cool periwinkle aura with a blue action anchor for product-style interfaces.',
     colors: <Color>[
-      Color(0xFFFAE5D8),
-      Color(0xFFDFB6B2),
-      Color(0xFF824D69),
-      Color(0xFF522959),
-      Color(0xFF2A114B),
-      Color(0xFF180018),
+      Color(0xFFB4BEFF),
+      Color(0xFF8FA8FF),
+      Color(0xFF5865F2),
+      Color(0xFF2A85FF),
+      Color(0xFF6E56CF),
+      Color(0xFF121417),
     ],
-    backgroundStart: Color(0xFFFAE5D8),
-    backgroundEnd: Color(0xFF522959),
-    surface: Color(0xFFFFF6F0),
-    surfaceAlt: Color(0xFFDFB6B2),
-    ink: Color(0xFF180018),
-    muted: Color(0xFF824D69),
-    primary: Color(0xFF522959),
-    secondary: Color(0xFF824D69),
-    tertiary: Color(0xFFDFB6B2),
+    backgroundStart: Color(0xFFB4BEFF),
+    backgroundEnd: Color(0xFFB9C7FF),
+    surface: AuraBento.surfaceWhite,
+    surfaceAlt: AuraBento.surfaceCardMuted,
+    ink: AuraBento.textPrimary,
+    muted: AuraBento.textSecondary,
+    primary: Color(0xFF3B5BDB),
+    secondary: Color(0xFF6E56CF),
+    tertiary: AuraBento.accentBlueAction,
   ),
   PortfolioPalette(
-    id: PortfolioThemeId.tealSand,
-    name: 'Teal Sand',
-    description: 'Deep blue-green balanced by warm camel neutrals.',
+    id: PortfolioThemeId.porcelainMist,
+    name: 'Porcelain Mist',
+    description: 'Quiet porcelain neutrals with the pure black anchor — the most minimal aura.',
     colors: <Color>[
-      Color(0xFF10252A),
-      Color(0xFF3D4D55),
-      Color(0xFFA79E9C),
-      Color(0xFFD3C3B9),
-      Color(0xFFB58863),
-      Color(0xFF161616),
+      Color(0xFFF3F4F6),
+      Color(0xFFE2E4E8),
+      Color(0xFFC9CDD4),
+      Color(0xFF8F96A3),
+      Color(0xFF111111),
+      Color(0xFF121417),
     ],
-    backgroundStart: Color(0xFFB58863),
-    backgroundEnd: Color(0xFF10252A),
-    surface: Color(0xFFF1E8E2),
-    surfaceAlt: Color(0xFFD3C3B9),
-    ink: Color(0xFF161616),
-    muted: Color(0xFF3D4D55),
-    primary: Color(0xFF10252A),
-    secondary: Color(0xFFB58863),
-    tertiary: Color(0xFFA79E9C),
+    backgroundStart: Color(0xFFE7E0F2),
+    backgroundEnd: Color(0xFFD8DEE9),
+    surface: AuraBento.surfaceWhite,
+    surfaceAlt: AuraBento.surfaceCardMuted,
+    ink: AuraBento.textPrimary,
+    muted: AuraBento.textSecondary,
+    primary: AuraBento.accentDarkAction,
+    secondary: AuraBento.accentBlueAction,
+    tertiary: AuraBento.textTertiary,
   ),
   PortfolioPalette(
-    id: PortfolioThemeId.forestMist,
-    name: 'Forest Mist',
-    description: 'Calm forest greens with pale botanical highlights.',
+    id: PortfolioThemeId.sageAtmosphere,
+    name: 'Sage Atmosphere',
+    description: 'Soft sage mist grounded by the dark neutral anchor for calm, tactile layouts.',
     colors: <Color>[
-      Color(0xFF051F20),
-      Color(0xFF0B2B26),
-      Color(0xFF163832),
-      Color(0xFF235347),
-      Color(0xFF8EB69B),
-      Color(0xFFDAF1DE),
+      Color(0xFFDDE8DE),
+      Color(0xFFB8CDB9),
+      Color(0xFF8FAF92),
+      Color(0xFF5C7F60),
+      Color(0xFF2F5D3A),
+      Color(0xFF121417),
     ],
-    backgroundStart: Color(0xFFDAF1DE),
-    backgroundEnd: Color(0xFF0B2B26),
-    surface: Color(0xFFF4FCF5),
-    surfaceAlt: Color(0xFFDAF1DE),
-    ink: Color(0xFF051F20),
-    muted: Color(0xFF235347),
-    primary: Color(0xFF0B2B26),
-    secondary: Color(0xFF235347),
-    tertiary: Color(0xFF8EB69B),
+    backgroundStart: Color(0xFFDCE8DA),
+    backgroundEnd: Color(0xFFC9DCCF),
+    surface: AuraBento.surfaceWhite,
+    surfaceAlt: AuraBento.surfaceCardMuted,
+    ink: AuraBento.textPrimary,
+    muted: AuraBento.textSecondary,
+    primary: Color(0xFF2F6B3C),
+    secondary: Color(0xFF5C7F60),
+    tertiary: Color(0xFF8FAF92),
   ),
   PortfolioPalette(
-    id: PortfolioThemeId.burgundyCoffee,
-    name: 'Burgundy Coffee',
-    description: 'Bold wine tones grounded by creamy coffee neutrals.',
+    id: PortfolioThemeId.emberEmber,
+    name: 'Ember Aura',
+    description: 'Warm ember mesh with the orange indicator — high-contrast warmth on the gray canvas.',
     colors: <Color>[
-      Color(0xFF561C24),
-      Color(0xFF6D2932),
-      Color(0xFFC7B7A3),
-      Color(0xFFE8D8C4),
+      Color(0xFFFFD9B0),
+      Color(0xFFFFB28F),
+      Color(0xFFFF8C66),
+      Color(0xFFE86927),
+      Color(0xFFD96500),
+      Color(0xFF121417),
     ],
-    backgroundStart: Color(0xFFE8D8C4),
-    backgroundEnd: Color(0xFF561C24),
-    surface: Color(0xFFFFF8EF),
-    surfaceAlt: Color(0xFFE8D8C4),
-    ink: Color(0xFF361116),
-    muted: Color(0xFF6D2932),
-    primary: Color(0xFF6D2932),
-    secondary: Color(0xFFC7B7A3),
-    tertiary: Color(0xFFE8D8C4),
+    backgroundStart: Color(0xFFFFD9B0),
+    backgroundEnd: Color(0xFFFFBFA3),
+    surface: AuraBento.surfaceWhite,
+    surfaceAlt: AuraBento.surfaceCardMuted,
+    ink: AuraBento.textPrimary,
+    muted: AuraBento.textSecondary,
+    primary: AuraBento.accentOrange,
+    secondary: Color(0xFFD96500),
+    tertiary: AuraBento.accentBlueAction,
   ),
   PortfolioPalette(
-    id: PortfolioThemeId.roseCocoa,
-    name: 'Rose Cocoa',
-    description: 'Dusty rose, cocoa, and polished blush surfaces.',
+    id: PortfolioThemeId.duskLavender,
+    name: 'Dusk Lavender',
+    description: 'Dusky lavender aura with violet anchors — the most atmospheric of the six.',
     colors: <Color>[
-      Color(0xFF2A0800),
-      Color(0xFF775144),
-      Color(0xFFC09891),
-      Color(0xFFBEA8A7),
-      Color(0xFFEAD8D8),
+      Color(0xFFEDE8FE),
+      Color(0xFFD6CBFA),
+      Color(0xFFB9A8F4),
+      Color(0xFF6E56CF),
+      Color(0xFF5865F2),
+      Color(0xFF121417),
     ],
-    backgroundStart: Color(0xFFEAD8D8),
-    backgroundEnd: Color(0xFF775144),
-    surface: Color(0xFFFFF6F6),
-    surfaceAlt: Color(0xFFEAD8D8),
-    ink: Color(0xFF2A0800),
-    muted: Color(0xFF775144),
-    primary: Color(0xFF775144),
-    secondary: Color(0xFFC09891),
-    tertiary: Color(0xFFBEA8A7),
+    backgroundStart: Color(0xFFE4DBFC),
+    backgroundEnd: Color(0xFFCFD6FF),
+    surface: AuraBento.surfaceWhite,
+    surfaceAlt: AuraBento.surfaceCardMuted,
+    ink: AuraBento.textPrimary,
+    muted: AuraBento.textSecondary,
+    primary: Color(0xFF6E56CF),
+    secondary: Color(0xFF5865F2),
+    tertiary: AuraBento.accentBlueAction,
   ),
 ];
 
 class ThemeController extends ChangeNotifier {
   static const String _storageKey = 'portfolio_theme_id';
 
-  PortfolioThemeId _themeId = PortfolioThemeId.coralOriginal;
+  PortfolioThemeId _themeId = PortfolioThemeId.auraSunset;
 
   PortfolioThemeId get themeId => _themeId;
 

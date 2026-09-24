@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/app_theme.dart';
+import '../core/aura_bento.dart';
 import '../widgets/glass_surface.dart';
 import 'admin_page.dart';
 
@@ -12,7 +13,7 @@ Future<void> openProtectedAdmin(BuildContext context) async {
     context: context,
     barrierDismissible: true,
     barrierLabel: 'Close admin password dialog',
-    barrierColor: AppColors.ink.withOpacity(0.22),
+    barrierColor: Colors.black.withAlpha(64),
     transitionDuration: const Duration(milliseconds: 560),
     pageBuilder: (context, animation, secondaryAnimation) {
       return const _AdminPasswordDialog();
@@ -89,9 +90,8 @@ class _AdminPasswordDialogState extends State<_AdminPasswordDialog> {
             child: Material(
               color: Colors.transparent,
               child: GlassSurface(
-                radius: 35,
-                opacity: 0.90,
-                padding: const EdgeInsets.all(26),
+                radius: AuraBento.radiusXl - 4,
+                padding: const EdgeInsets.all(AuraBento.space6 + 2),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,31 +100,18 @@ class _AdminPasswordDialogState extends State<_AdminPasswordDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          width: 54,
-                          height: 54,
-                          decoration: BoxDecoration(
+                          width: 52,
+                          height: 52,
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient: const LinearGradient(
-                              colors: <Color>[
-                                AppColors.cyan,
-                                AppColors.violet,
-                                AppColors.pink,
-                              ],
-                            ),
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                color: AppColors.violet.withOpacity(0.22),
-                                blurRadius: 28,
-                                offset: const Offset(0, 12),
-                              ),
-                            ],
+                            color: AuraBento.accentDarkAction,
                           ),
                           child: const Icon(
                             Icons.lock_outline_rounded,
-                            color: Colors.white,
+                            color: AuraBento.textInverted,
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: AuraBento.space4),
                         const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,39 +119,34 @@ class _AdminPasswordDialogState extends State<_AdminPasswordDialog> {
                               Text(
                                 'Admin Control',
                                 style: TextStyle(
-                                  color: AppColors.ink,
+                                  fontFamily: AuraBento.fontSerif,
+                                  color: AuraBento.textPrimary,
                                   fontSize: 28,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: -1.1,
+                                  letterSpacing: -0.3,
                                 ),
                               ),
                               SizedBox(height: 6),
                               Text(
                                 'Enter the password to manage live projects and screenshots.',
                                 style: TextStyle(
-                                  color: AppColors.inkMuted,
+                                  color: AuraBento.textSecondary,
                                   height: 1.5,
+                                  fontSize: 13,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        IconButton.filled(
+                        const SizedBox(width: AuraBento.space2),
+                        AuraCircularToken(
+                          icon: Icons.close_rounded,
+                          variant: AuraCircularTokenVariant.pureWhite,
                           tooltip: 'Close',
-                          onPressed: () => Navigator.of(context).pop(false),
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.82),
-                            foregroundColor: AppColors.ink,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          icon: const Icon(Icons.close_rounded),
+                          onTap: () => Navigator.of(context).pop(false),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AuraBento.space6),
                     TextField(
                       controller: _controller,
                       focusNode: _focusNode,
@@ -194,20 +176,21 @@ class _AdminPasswordDialogState extends State<_AdminPasswordDialog> {
                       duration: const Duration(milliseconds: 360),
                       switchInCurve: const Cubic(0.22, 1, 0.36, 1),
                       child: _error == null
-                          ? const SizedBox(height: 14)
+                          ? const SizedBox(height: AuraBento.space3 + 2)
                           : Padding(
                               key: ValueKey<String>(_error!),
-                              padding: const EdgeInsets.only(top: 12),
+                              padding:
+                                  const EdgeInsets.only(top: AuraBento.space3),
                               child: Text(
                                 _error!,
                                 style: const TextStyle(
                                   color: AppColors.danger,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AuraBento.space2),
                     SizedBox(
                       width: double.infinity,
                       child: PremiumButton(

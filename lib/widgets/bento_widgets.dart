@@ -1752,9 +1752,9 @@ class BentoOSWidgetSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.08),
+                      color: Colors.white.withAlpha(20),
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                      border: Border.all(color: Colors.white.withAlpha(31)),
                     ),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,

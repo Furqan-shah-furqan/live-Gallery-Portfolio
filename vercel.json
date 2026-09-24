@@ -1,12 +1,5 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "bash ./scripts/build_web.sh",
-  "outputDirectory": "build/web",
-  "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "installCommand": "sh ./scripts/build_web.sh install",
+  "buildCommand": "sh ./scripts/build_web.sh build",
+  "outputDirectory": "build/web"
 }

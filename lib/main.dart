@@ -7,7 +7,6 @@ import 'core/app_theme.dart';
 import 'core/theme_controller.dart';
 import 'pages/home_page.dart';
 import 'services/project_store.dart';
-import 'widgets/liquid_gooey.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

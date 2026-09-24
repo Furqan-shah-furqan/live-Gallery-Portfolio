@@ -1,49 +1,33 @@
 # Project Context: Live Systems Gallery
 
 ## Overview
-**Live Systems Gallery** is a responsive Flutter web and cross-platform portfolio application. It is engineered with a glossy glassmorphism aesthetic, soft pastel mesh and liquid-gooey background animations, scroll parallax, multi-theme palette switching, and local admin management for projects.
+**Live Systems Gallery** is a responsive Flutter web and cross-platform portfolio application, restyled on the **Aura-Bento design system** (`design.md`): a neutral `#E9EBEF` canvas with drifting warm/cool aura mesh, white hyper-curved bento cards, pill action buttons, circular action tokens, amber/lavender badges, dark HUD accents, and the Instrument Serif + Inter type pairing. It retains local admin management for projects.
 
 ---
 
 ## Key Features & Highlights
 
 1. **Visual Design & Aesthetics**
-   - **Modern Glassmorphism**: Translucent surfaces (`GlassSurface`), frosted glass borders, subtle shadows, and soft ambient reflections.
-   - **Liquid Gooey & Animated Mesh**: Custom fluid animations using shaders and matrix canvases (`LiquidGooeyBackground`, `AnimatedMeshBackground`).
-   - **Theme Studio**: Multi-theme system with 6 distinct color palettes:
-     - `Original Coral` (Sunset warm palette)
-     - `Warm Plum`
-     - `Teal Sand`
-     - `Forest Mist`
-     - `Burgundy Coffee`
-     - `Rose Cocoa`
-   - **Parallax Hero**: Transparent cinematic hero graphic (`assets/images/cinematic-hero.png`) reacting to scroll position.
-   - **Global Custom Scroll Behavior**: Scrollbars hidden via `NoScrollbarBehavior` while allowing pointer drag across trackpads, mice, and touch devices.
+   - **Aura-Bento tokens** (`lib/core/aura_bento.dart`): canonical colors, radii (8/14/20/28/36/full), 8pt spacing scale, ambient elevation, and the `innerRadius()` concentric-geometry helper (`R_inner = R_outer − padding`).
+   - **Aura mesh canvas** (`AnimatedMeshBackground`): light `#E9EBEF` base with drifting warm/cool radial patches derived from the active palette (z-canvas → z-aura layering).
+   - **Bento kit** (`GlassSurface`, `PremiumButton`, `AuraBadge`, `AuraCircularToken`, `AuraHudTracker`): white radius-28 cards, pill CTAs (black-anchor / aurora-gradient), 32px tinted badges, 44px circular action tokens, and the dark `#0A0A0A` HUD step tracker with `#2A85FF` nodes.
+   - **Typography**: Instrument Serif for conversational display headlines, Inter for interface chrome. Both bundled in `assets/fonts/` and registered in `pubspec.yaml`.
+   - **Accessibility**: WCAG AA text anchors, `2px #2A85FF` focus rings with `2px` offset, ≥44px touch targets, dark text tokens on tinted pill washes.
+   - **Theme Studio**: 6 Aura palettes (Aura Sunset, Aurora Periwinkle, Porcelain Mist, Sage Atmosphere, Ember Aura, Dusk Lavender). Only aura hues and accent anchors change per theme — structural tokens stay fixed.
 
 2. **Portfolio & Gallery System**
-   - **Expandable Live Gallery**:
-     - The first project is rendered landscape by default.
-     - Collapsed cards display at compact widths on desktop and smoothly expand to landscape on hover or tap.
-     - Horizontal smooth scrolling support when projects grow.
-   - **Project Detail View**:
-     - Dedicated page displaying project metadata, full description, live links, technology tags, and an uncropped, high-resolution screenshot slider (`BoxFit.contain`).
-   - **Explore Live Work (All Projects Page)**:
-     - Full list view with real-time text search and technology stack tag filtering.
-     - Empty-state design (`No Projects added Yet`).
+   - **Expandable Live Gallery**: first project landscape by default, 100px collapsed columns on desktop, hover/tap to expand, horizontal scrolling.
+   - **Project Detail View**: metadata, description, live links, and an uncropped screenshot slider (`BoxFit.contain`).
+   - **Explore Live Work (All Projects Page)**: real-time search and technology filtering with pill input capsules.
+   - **Empty-state design**: `No Projects added Yet`.
 
 3. **Admin Control & Content Management**
-   - **Password Protected**: Guarded by a PIN/password screen (`lib/pages/admin_access.dart`).
-     - Default access password: `furqan123`
-   - **Project Management**:
-     - Add new projects with title, live link, detailed description, technology stack chips, and up to 8 screenshot uploads (`file_picker`).
-     - Real-time screenshot preview with deletion/reordering before publishing.
-     - Edit, delete individual projects, or clear all entries.
-     - Option to restore starter showcase projects.
+   - **Password Protected** (`lib/pages/admin_access.dart`), default password: `furqan123`
+   - **Project Management**: add projects with title, live link, description, tech stack chips, and up to 8 screenshots (`file_picker`); delete, Clear All, restore starter projects.
 
 4. **Persistence & Storage Architecture**
-   - Hybrid persistence layer supporting Web and Native environments.
-   - Local storage powered by `shared_preferences` and Web IndexedDB (`idb_shim`).
-   - Images are stored as Base64 data URLs with backwards compatibility parsing (`imageDataUrl`, `screenshots`, legacy formats).
+   - Hybrid persistence: `shared_preferences` (native) + IndexedDB (`idb_shim`, web).
+   - Images stored as Base64 data URLs with backwards-compatible parsing (`images`, `screenshots`, `imageDataUrl`, legacy formats).
 
 ---
 
@@ -62,15 +46,18 @@
 ## Directory Structure & Code Organization
 
 ```
-live_system_gallery_updated_themes_parallax/
+live_system_gallery/
+├── design.md                         # Canonical Aura-Bento spec (source of truth)
 ├── assets/
-│   └── images/
-│       └── cinematic-hero.png        # Transparent hero parallax artwork
+│   ├── fonts/inter/                  # Inter 400–900 (+ italic)
+│   ├── fonts/instrument/             # Instrument Serif regular + italic
+│   └── images/cinematic-hero.png
 ├── lib/
 │   ├── main.dart                     # App entry point, scopes, scroll behavior & MaterialApp
 │   ├── core/
-│   │   ├── app_theme.dart            # ThemeData builders, AppColors, typography tokens
-│   │   └── theme_controller.dart     # Palette state manager, SharedPreferences sync
+│   │   ├── aura_bento.dart           # Aura-Bento token system (colors, radii, spacing, shadows)
+│   │   ├── app_theme.dart            # ThemeData builders, AppColors aliases, typography
+│   │   └── theme_controller.dart     # 6 Aura palettes, SharedPreferences sync
 │   ├── models/
 │   │   └── project_model.dart        # ProjectModel & ProjectImageData (Base64 deserializers)
 │   ├── services/
@@ -79,20 +66,22 @@ live_system_gallery_updated_themes_parallax/
 │   │   ├── project_persistence_web.dart # IndexedDB web storage implementation
 │   │   └── project_persistence_shared.dart # Native fallback storage
 │   ├── pages/
-│   │   ├── home_page.dart            # Landing dashboard, hero parallax, stats & gallery
+│   │   ├── home_page.dart            # Bento dashboard: hero, gallery, contact, footer
 │   │   ├── projects_page.dart        # All projects view with search and tech filters
 │   │   ├── project_detail_page.dart  # Full screenshot slider & specifications view
 │   │   ├── theme_page.dart           # Theme Studio palette selector
 │   │   ├── admin_access.dart         # Password authentication guard
 │   │   └── admin_page.dart           # Admin dashboard, project creation modal & management
 │   └── widgets/
-│       ├── animated_mesh_background.dart # Soft animated mesh background painter
-│       ├── glass_surface.dart        # Frosted glassmorphism container
-│       ├── liquid_gooey.dart         # Fluid organic morphing visuals
-│       └── project_card.dart         # Expandable gallery card component
+│       ├── animated_mesh_background.dart # Aura canvas painter (z-canvas/z-aura)
+│       ├── glass_surface.dart        # BentoSurface card, PillButton, AuraBadge, HUD kit
+│       ├── liquid_gooey.dart         # Dock & filter pills (Aura-styled), page transition
+│       ├── hero_cutout_section.dart  # Aura hero module with dark HUD tracker
+│       ├── scroll_reveal.dart        # Viewport-aware reveal animations
+│       └── project_card.dart         # Bento gallery card component
 ├── web/                              # Web runner & index.html configuration
 ├── run_web.bat                       # Quick launcher script for port 7357
-└── pubspec.yaml                      # Dependencies and asset declarations
+└── pubspec.yaml                      # Dependencies, assets, and font registration
 ```
 
 ---

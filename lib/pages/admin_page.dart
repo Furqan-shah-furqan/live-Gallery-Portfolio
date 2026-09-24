@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../core/app_theme.dart';
+import '../core/aura_bento.dart';
 import '../models/project_model.dart';
 import '../services/project_store.dart';
 import '../widgets/animated_mesh_background.dart';
@@ -38,7 +39,6 @@ class _AdminPageState extends State<AdminPage> {
     final store = ProjectStoreScope.of(context);
 
     return AnimatedMeshBackground(
-      darkness: 0.93,
       child: Scaffold(
         extendBody: true,
         bottomNavigationBar: SafeArea(
@@ -90,7 +90,7 @@ class _AdminPageState extends State<AdminPage> {
                           onManage: () => setState(() => _manageMode = true),
                           onAdd: () => _addProject(context, store),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: AuraBento.space5),
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 560),
                           switchInCurve: const Cubic(0.22, 1, 0.36, 1),
@@ -130,7 +130,7 @@ class _AdminPageState extends State<AdminPage> {
                                   onManage: () => setState(() => _manageMode = true),
                                 ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: AuraBento.space5),
                       ],
                     ),
                   ),
@@ -148,7 +148,7 @@ class _AdminPageState extends State<AdminPage> {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Close Add Project',
-      barrierColor: AppColors.ink.withOpacity(0.24),
+      barrierColor: Colors.black.withAlpha(66),
       transitionDuration: const Duration(milliseconds: 560),
       pageBuilder: (context, animation, secondaryAnimation) {
         return const _AddProjectDialog();
@@ -243,9 +243,19 @@ class _AdminPageState extends State<AdminPage> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              backgroundColor: Colors.white,
-              title: Text(title),
-              content: Text(message),
+              backgroundColor: AuraBento.surfaceWhite,
+              title: Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: AuraBento.fontSerif,
+                  color: AuraBento.textPrimary,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              content: Text(
+                message,
+                style: const TextStyle(color: AuraBento.textSecondary),
+              ),
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
@@ -255,7 +265,11 @@ class _AdminPageState extends State<AdminPage> {
                   onPressed: () => Navigator.of(context).pop(true),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.danger,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AuraBento.textInverted,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(AuraBento.radiusFull),
+                    ),
                   ),
                   child: Text(confirmLabel),
                 ),
@@ -287,10 +301,17 @@ class _AdminPageState extends State<AdminPage> {
             children: <Widget>[
               Icon(
                 success ? Icons.check_circle_rounded : Icons.error_rounded,
-                color: success ? AppColors.green : AppColors.danger,
+                color: success
+                    ? AuraBento.accentBlueAction
+                    : const Color(0xFFFF8FAE),
               ),
               const SizedBox(width: 10),
-              Expanded(child: Text(message)),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(color: AuraBento.textInverted),
+                ),
+              ),
             ],
           ),
         ),
@@ -319,23 +340,20 @@ class _AdminHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedEntrance(
       child: GlassSurface(
-        radius: 28,
-        opacity: 0.08,
-        padding: const EdgeInsets.all(16),
+        radius: AuraBento.radiusMd + 8,
+        padding: const EdgeInsets.all(AuraBento.space4),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final compact = constraints.maxWidth < 850;
             final title = Row(
               children: <Widget>[
-                IconButton.filled(
+                AuraCircularToken(
+                  icon: Icons.arrow_back_rounded,
+                  variant: AuraCircularTokenVariant.pitchBlack,
                   tooltip: 'Back to portfolio',
-                  onPressed: onBack,
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.white.withOpacity(0.09),
-                  ),
-                  icon: const Icon(Icons.arrow_back_rounded),
+                  onTap: onBack,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AuraBento.space3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -343,9 +361,9 @@ class _AdminHeader extends StatelessWidget {
                       const Text(
                         'ADMIN CONTROL',
                         style: TextStyle(
-                          color: AppColors.ink,
+                          color: AuraBento.textTertiary,
                           fontSize: 11,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.8,
                         ),
                       ),
@@ -355,7 +373,7 @@ class _AdminHeader extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          color: AppColors.inkMuted,
+                          color: AuraBento.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -398,7 +416,7 @@ class _AdminHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   title,
-                  const SizedBox(height: 14),
+                  const SizedBox(height: AuraBento.space3 + 2),
                   actions,
                 ],
               );
@@ -407,7 +425,7 @@ class _AdminHeader extends StatelessWidget {
             return Row(
               children: <Widget>[
                 Expanded(child: title),
-                const SizedBox(width: 18),
+                const SizedBox(width: AuraBento.space4 + 2),
                 actions,
               ],
             );
@@ -451,9 +469,8 @@ class _DashboardView extends StatelessWidget {
         AnimatedEntrance(
           delay: const Duration(milliseconds: 80),
           child: GlassSurface(
-            radius: 38,
-            opacity: 0.07,
-            padding: const EdgeInsets.all(28),
+            radius: AuraBento.radiusXl,
+            padding: const EdgeInsets.all(AuraBento.space8 - 4),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final wide = constraints.maxWidth >= 900;
@@ -461,21 +478,25 @@ class _DashboardView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     const SectionEyebrow('Portfolio operations'),
-                    const SizedBox(height: 13),
+                    const SizedBox(height: AuraBento.space3 + 1),
                     Text(
                       'Manage every live system from one clean dashboard.',
-                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            fontSize: constraints.maxWidth < 600 ? 40 : 58,
-                          ),
+                      style: TextStyle(
+                        fontFamily: AuraBento.fontSerif,
+                        color: AuraBento.textPrimary,
+                        fontSize: constraints.maxWidth < 600 ? 34 : 46,
+                        height: 1.08,
+                        letterSpacing: -0.4,
+                      ),
                     ),
-                    const SizedBox(height: 15),
-                     ConstrainedBox(
-                      constraints:const BoxConstraints(maxWidth: 760),
-                      child:const Text(
+                    const SizedBox(height: AuraBento.space3 + 1),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
+                      child: const Text(
                         'Add project details, multiple screenshots, the technology stack, and a live link. Changes appear in the public project gallery automatically.',
                         style: TextStyle(
-                          color: AppColors.inkMuted,
-                          fontSize: 16,
+                          color: AuraBento.textSecondary,
+                          fontSize: 15,
                           height: 1.65,
                         ),
                       ),
@@ -483,8 +504,8 @@ class _DashboardView extends StatelessWidget {
                   ],
                 );
                 final actions = Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                  spacing: AuraBento.space2 + 2,
+                  runSpacing: AuraBento.space2 + 2,
                   children: <Widget>[
                     PremiumButton(
                       label: 'Add New Live Project',
@@ -505,7 +526,7 @@ class _DashboardView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       copy,
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AuraBento.space6),
                       actions,
                     ],
                   );
@@ -515,7 +536,7 @@ class _DashboardView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Expanded(child: copy),
-                    const SizedBox(width: 24),
+                    const SizedBox(width: AuraBento.space6),
                     actions,
                   ],
                 );
@@ -523,37 +544,37 @@ class _DashboardView extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AuraBento.space5),
         _AdminStats(
           projects: projects.length,
           screenshots: screenshotCount,
           stacks: stacks,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AuraBento.space5),
         AnimatedEntrance(
           delay: const Duration(milliseconds: 180),
           child: GlassSurface(
-            radius: 38,
-            opacity: 0.065,
-            padding: const EdgeInsets.all(22),
+            radius: AuraBento.radiusLg + 2,
+            padding: const EdgeInsets.all(AuraBento.space5 + 2),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    const Expanded(child: SectionEyebrow('Latest project slider')),
+                    const Expanded(
+                        child: SectionEyebrow('Latest project slider')),
                     Text(
                       projects.isEmpty
                           ? 'No projects'
                           : '${pageIndex + 1} / ${projects.length}',
                       style: const TextStyle(
-                        color: AppColors.inkMuted,
-                        fontWeight: FontWeight.w800,
+                        color: AuraBento.textSecondary,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: AuraBento.space4 + 2),
                 if (projects.isEmpty)
                   _AdminEmptyState(onAdd: onAdd)
                 else ...<Widget>[
@@ -565,7 +586,8 @@ class _DashboardView extends StatelessWidget {
                       onPageChanged: onPageChanged,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 8),
                           child: ProjectCard(
                             project: projects[index],
                             onTap: () => onOpen(projects[index]),
@@ -574,7 +596,7 @@ class _DashboardView extends StatelessWidget {
                       },
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AuraBento.space4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List<Widget>.generate(
@@ -587,9 +609,10 @@ class _DashboardView extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 3),
                         decoration: BoxDecoration(
                           color: index == pageIndex
-                              ? AppColors.cyan
-                              : Colors.white.withOpacity(0.20),
-                          borderRadius: BorderRadius.circular(999),
+                              ? AuraBento.accentBlueAction
+                              : AuraBento.textPrimary.withAlpha(30),
+                          borderRadius:
+                              BorderRadius.circular(AuraBento.radiusFull),
                         ),
                       ),
                     ),
@@ -618,10 +641,26 @@ class _AdminStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stats = <({String value, String label, IconData icon})>[
-      (value: '$projects', label: 'Live projects', icon: Icons.grid_view_rounded),
-      (value: '$screenshots', label: 'Screenshots', icon: Icons.photo_library_outlined),
-      (value: '$stacks', label: 'Technology stacks', icon: Icons.code_rounded),
-      (value: 'Local', label: 'Private storage', icon: Icons.lock_outline_rounded),
+      (
+        value: '$projects',
+        label: 'Live projects',
+        icon: Icons.grid_view_rounded
+      ),
+      (
+        value: '$screenshots',
+        label: 'Screenshots',
+        icon: Icons.photo_library_outlined
+      ),
+      (
+        value: '$stacks',
+        label: 'Technology stacks',
+        icon: Icons.code_rounded
+      ),
+      (
+        value: 'Local',
+        label: 'Private storage',
+        icon: Icons.lock_outline_rounded
+      ),
     ];
 
     return AnimatedEntrance(
@@ -633,7 +672,8 @@ class _AdminStats extends StatelessWidget {
               : constraints.maxWidth >= 560
                   ? 2
                   : 1;
-          final width = (constraints.maxWidth - (columns - 1) * 14) / columns;
+          final width =
+              (constraints.maxWidth - (columns - 1) * 14) / columns;
           return Wrap(
             spacing: 14,
             runSpacing: 14,
@@ -642,41 +682,42 @@ class _AdminStats extends StatelessWidget {
                   (stat) => SizedBox(
                     width: width,
                     child: GlassSurface(
-                      radius: 26,
-                      opacity: 0.075,
-                      padding: const EdgeInsets.all(20),
+                      radius: AuraBento.radiusLg - 2,
+                      padding: const EdgeInsets.all(AuraBento.space5),
                       shadow: false,
                       child: Row(
                         children: <Widget>[
                           Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
+                            width: 44,
+                            height: 44,
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.cyan.withOpacity(0.10),
+                              color: AuraBento.badgeLavenderBg,
                             ),
-                            child: Icon(stat.icon, color: AppColors.cyan),
+                            child: Icon(stat.icon,
+                                color: AuraBento.badgeLavenderText),
                           ),
-                          const SizedBox(width: 14),
+                          const SizedBox(width: AuraBento.space3 + 2),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
                                   stat.value,
                                   style: const TextStyle(
-                                    color: AppColors.ink,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: -0.9,
+                                    color: AuraBento.textPrimary,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: -0.5,
                                   ),
                                 ),
                                 Text(
                                   stat.label,
                                   style: const TextStyle(
-                                    color: AppColors.inkMuted,
+                                    color: AuraBento.textSecondary,
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
@@ -719,9 +760,8 @@ class _ManageProjectsView extends StatelessWidget {
       children: <Widget>[
         AnimatedEntrance(
           child: GlassSurface(
-            radius: 36,
-            opacity: 0.07,
-            padding: const EdgeInsets.all(26),
+            radius: AuraBento.radiusLg,
+            padding: const EdgeInsets.all(AuraBento.space6 + 2),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final compact = constraints.maxWidth < 760;
@@ -729,23 +769,29 @@ class _ManageProjectsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     const SectionEyebrow('All projects'),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AuraBento.space3),
                     Text(
                       'Manage the complete live gallery.',
-                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            fontSize: constraints.maxWidth < 600 ? 40 : 56,
-                          ),
+                      style: TextStyle(
+                        fontFamily: AuraBento.fontSerif,
+                        color: AuraBento.textPrimary,
+                        fontSize: constraints.maxWidth < 600 ? 34 : 44,
+                        height: 1.08,
+                        letterSpacing: -0.4,
+                      ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: AuraBento.space2 + 2),
                     Text(
                       '${projects.length} projects currently saved on this device.',
-                      style: const TextStyle(color: AppColors.inkMuted),
+                      style: const TextStyle(
+                        color: AuraBento.textSecondary,
+                      ),
                     ),
                   ],
                 );
                 final actions = Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                  spacing: AuraBento.space2 + 2,
+                  runSpacing: AuraBento.space2 + 2,
                   children: <Widget>[
                     PremiumButton(
                       label: 'Add Project',
@@ -774,7 +820,7 @@ class _ManageProjectsView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       copy,
-                      const SizedBox(height: 20),
+                      const SizedBox(height: AuraBento.space5),
                       actions,
                     ],
                   );
@@ -784,7 +830,7 @@ class _ManageProjectsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Expanded(child: copy),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: AuraBento.space5),
                     actions,
                   ],
                 );
@@ -792,7 +838,7 @@ class _ManageProjectsView extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AuraBento.space5),
         if (projects.isEmpty)
           _AdminEmptyState(onAdd: onAdd, onRestore: onRestore)
         else
@@ -801,7 +847,8 @@ class _ManageProjectsView extends StatelessWidget {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final columns = constraints.maxWidth >= 760 ? 2 : 1;
-                final width = (constraints.maxWidth - (columns - 1) * 20) / columns;
+                final width =
+                    (constraints.maxWidth - (columns - 1) * 20) / columns;
                 return Wrap(
                   spacing: 20,
                   runSpacing: 20,
@@ -835,36 +882,43 @@ class _AdminEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassSurface(
-      radius: 34,
-      opacity: 0.07,
+      radius: AuraBento.radiusLg - 2,
       padding: const EdgeInsets.all(48),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const Icon(
-              Icons.add_photo_alternate_outlined,
-              color: AppColors.cyan,
-              size: 58,
+            Container(
+              width: 64,
+              height: 64,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AuraBento.badgeAmberBg,
+              ),
+              child: const Icon(
+                Icons.add_photo_alternate_outlined,
+                color: AuraBento.badgeAmberText,
+                size: 28,
+              ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: AuraBento.space4),
             const Text(
               'No project added yet',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.ink,
+                fontFamily: AuraBento.fontSerif,
+                color: AuraBento.textPrimary,
                 fontSize: 30,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -1.1,
+                letterSpacing: -0.3,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: AuraBento.space2 + 2),
             const Text(
               'Add project details and screenshots to publish them in the live gallery.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.inkMuted),
+              style: TextStyle(color: AuraBento.textSecondary),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: AuraBento.space5 + 2),
             Wrap(
               spacing: 10,
               runSpacing: 10,
@@ -941,15 +995,15 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 780, maxHeight: 820),
+            constraints:
+                const BoxConstraints(maxWidth: 780, maxHeight: 820),
             child: Material(
               color: Colors.transparent,
               child: GlassSurface(
-                radius: 45,
-                opacity: 0.16,
+                radius: AuraBento.radiusXl,
                 padding: EdgeInsets.zero,
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(26),
+                  padding: const EdgeInsets.all(AuraBento.space6 + 2),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -960,43 +1014,45 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                           children: <Widget>[
                             const Expanded(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
                                     'Add New Live Project',
                                     style: TextStyle(
-                                      color: AppColors.ink,
+                                      fontFamily: AuraBento.fontSerif,
+                                      color: AuraBento.textPrimary,
                                       fontSize: 30,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: -1.2,
+                                      letterSpacing: -0.3,
                                     ),
                                   ),
                                   SizedBox(height: 7),
                                   Text(
                                     'Add project information and up to eight screenshots. Everything is stored locally on this device.',
                                     style: TextStyle(
-                                      color: AppColors.inkMuted,
+                                      color: AuraBento.textSecondary,
                                       height: 1.5,
+                                      fontSize: 13,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            IconButton.filled(
+                            const SizedBox(width: AuraBento.space3),
+                            AuraCircularToken(
+                              icon: Icons.close_rounded,
+                              variant:
+                                  AuraCircularTokenVariant.pureWhite,
                               tooltip: 'Close',
-                              onPressed: () => Navigator.of(context).pop(),
-                              style: IconButton.styleFrom(
-                                backgroundColor: Colors.white.withOpacity(0.09),
-                              ),
-                              icon: const Icon(Icons.close_rounded),
+                              onTap: () => Navigator.of(context).pop(),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AuraBento.space6),
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final compact = constraints.maxWidth < 620;
+                            final compact =
+                                constraints.maxWidth < 620;
                             final name = TextFormField(
                               controller: _nameController,
                               textInputAction: TextInputAction.next,
@@ -1005,7 +1061,8 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                                 hintText: 'Type your project name',
                               ),
                               validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
+                                if (value == null ||
+                                    value.trim().isEmpty) {
                                   return 'Project name is required.';
                                 }
                                 return null;
@@ -1013,7 +1070,7 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                             );
                             final tech = DropdownButtonFormField<String>(
                               value: _techStack,
-                              dropdownColor: Colors.white,
+                              dropdownColor: AuraBento.surfaceWhite,
                               decoration: const InputDecoration(
                                 labelText: 'Tech stack',
                               ),
@@ -1026,7 +1083,9 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                                   )
                                   .toList(),
                               onChanged: (value) {
-                                if (value != null) setState(() => _techStack = value);
+                                if (value != null) {
+                                  setState(() => _techStack = value);
+                                }
                               },
                             );
 
@@ -1034,40 +1093,45 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                               return Column(
                                 children: <Widget>[
                                   name,
-                                  const SizedBox(height: 13),
+                                  const SizedBox(
+                                      height: AuraBento.space3 + 1),
                                   tech,
                                 ],
                               );
                             }
 
                             return Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                               children: <Widget>[
                                 Expanded(child: name),
-                                const SizedBox(width: 13),
+                                const SizedBox(
+                                    width: AuraBento.space3 + 1),
                                 Expanded(child: tech),
                               ],
                             );
                           },
                         ),
-                        const SizedBox(height: 13),
+                        const SizedBox(height: AuraBento.space3 + 1),
                         TextFormField(
                           controller: _detailsController,
                           minLines: 4,
                           maxLines: 7,
                           decoration: const InputDecoration(
                             labelText: 'Project details',
-                            hintText: 'Explain the problem, workflow, and useful features',
+                            hintText:
+                                'Explain the problem, workflow, and useful features',
                             alignLabelWithHint: true,
                           ),
                           validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
+                            if (value == null ||
+                                value.trim().isEmpty) {
                               return 'Project details are required.';
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 13),
+                        const SizedBox(height: AuraBento.space3 + 1),
                         TextFormField(
                           controller: _urlController,
                           keyboardType: TextInputType.url,
@@ -1077,32 +1141,37 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                           ),
                           validator: (value) {
                             final raw = value?.trim() ?? '';
-                            final normalized = raw.startsWith('http') ? raw : 'https://$raw';
+                            final normalized =
+                                raw.startsWith('http') ? raw : 'https://$raw';
                             final uri = Uri.tryParse(normalized);
-                            if (raw.isEmpty || uri == null || !uri.hasAuthority) {
+                            if (raw.isEmpty ||
+                                uri == null ||
+                                !uri.hasAuthority) {
                               return 'Add a valid live project link.';
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AuraBento.space4),
                         InkWell(
-                          borderRadius: BorderRadius.circular(26),
+                          borderRadius:
+                              BorderRadius.circular(AuraBento.radiusMd + 6),
                           onTap: _picking ? null : _pickImages,
                           child: Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 24,
+                              horizontal: AuraBento.space5,
+                              vertical: AuraBento.space6,
                             ),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(26),
-                              gradient: LinearGradient(
+                              borderRadius: BorderRadius.circular(
+                                  AuraBento.radiusMd + 6),
+                              gradient: const LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: <Color>[
-                                  Colors.white.withOpacity(0.10),
-                                  AppColors.cyan.withOpacity(0.07),
+                                  Color(0xFFF6F7FA),
+                                  Color(0xFFEAF1FF),
                                 ],
                               ),
                             ),
@@ -1112,17 +1181,18 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                                   _picking
                                       ? Icons.hourglass_top_rounded
                                       : Icons.add_photo_alternate_outlined,
-                                  color: AppColors.cyan,
-                                  size: 34,
+                                  color: AuraBento.accentBlueAction,
+                                  size: 32,
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(
+                                    height: AuraBento.space2 + 2),
                                 Text(
                                   _picking
                                       ? 'Reading screenshots…'
                                       : 'Choose project screenshots',
                                   style: const TextStyle(
-                                    color: AppColors.ink,
-                                    fontWeight: FontWeight.w900,
+                                    color: AuraBento.textPrimary,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 const SizedBox(height: 5),
@@ -1130,9 +1200,9 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                                   'PNG, JPG, or WEBP · maximum 2MB each · up to 8 images',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: AppColors.inkMuted,
+                                    color: AuraBento.textSecondary,
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
@@ -1140,23 +1210,27 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                           ),
                         ),
                         if (_images.isNotEmpty) ...<Widget>[
-                          const SizedBox(height: 14),
+                          const SizedBox(height: AuraBento.space3 + 2),
                           SizedBox(
                             height: 96,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: _images.length,
-                              separatorBuilder: (_, __) => const SizedBox(width: 10),
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 10),
                               itemBuilder: (context, index) {
                                 final image = _images[index];
                                 return Stack(
                                   children: <Widget>[
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(18),
+                                      borderRadius:
+                                          BorderRadius.circular(
+                                              AuraBento.radiusSm + 4),
                                       child: Container(
                                         width: 132,
                                         height: 96,
-                                        color: Colors.white.withOpacity(0.06),
+                                        color: AuraBento
+                                            .canvasLightSecondary,
                                         child: Image.memory(
                                           image.bytes,
                                           fit: BoxFit.cover,
@@ -1166,16 +1240,27 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                                     Positioned(
                                       top: 5,
                                       right: 5,
-                                      child: IconButton.filled(
-                                        visualDensity: VisualDensity.compact,
-                                        style: IconButton.styleFrom(
-                                          backgroundColor: Colors.white.withOpacity(0.92),
-                                          foregroundColor: AppColors.danger,
-                                        ),
-                                        onPressed: () {
-                                          setState(() => _images.removeAt(index));
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() =>
+                                              _images.removeAt(index));
                                         },
-                                        icon: const Icon(Icons.close_rounded, size: 17),
+                                        child: Container(
+                                          width: 26,
+                                          height: 26,
+                                          decoration:
+                                              const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                AuraBento.surfaceWhite,
+                                          ),
+                                          child: const Icon(
+                                            Icons.close_rounded,
+                                            size: 15,
+                                            color:
+                                                AuraBento.textPrimary,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -1185,16 +1270,17 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                           ),
                         ],
                         if (_error != null) ...<Widget>[
-                          const SizedBox(height: 12),
+                          const SizedBox(
+                              height: AuraBento.space3),
                           Text(
                             _error!,
                             style: const TextStyle(
                               color: AppColors.danger,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
-                        const SizedBox(height: 22),
+                        const SizedBox(height: AuraBento.space5 + 2),
                         Wrap(
                           spacing: 10,
                           runSpacing: 10,
@@ -1207,7 +1293,8 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
                             ),
                             PremiumButton(
                               label: 'Cancel',
-                              onPressed: () => Navigator.of(context).pop(),
+                              onPressed: () =>
+                                  Navigator.of(context).pop(),
                             ),
                           ],
                         ),
@@ -1238,7 +1325,8 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
       if (result == null) return;
 
       if (_images.length + result.files.length > 8) {
-        setState(() => _error = 'You can upload a maximum of 8 screenshots.');
+        setState(
+            () => _error = 'You can upload a maximum of 8 screenshots.');
         return;
       }
 
@@ -1257,7 +1345,8 @@ class _AddProjectDialogState extends State<_AddProjectDialog> {
 
       setState(() {});
     } catch (_) {
-      setState(() => _error = 'The selected screenshots could not be opened.');
+      setState(() =>
+          _error = 'The selected screenshots could not be opened.');
     } finally {
       if (mounted) setState(() => _picking = false);
     }

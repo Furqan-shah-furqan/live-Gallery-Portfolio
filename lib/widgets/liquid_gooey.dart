@@ -2,6 +2,8 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+import '../core/aura_bento.dart';
+
 /// Available liquid gooey visual and interaction effects
 enum LiquidEffect {
   melt,
@@ -492,16 +494,12 @@ class LiquidGooeyBar<T> extends StatefulWidget {
 class _LiquidGooeyBarState<T> extends State<LiquidGooeyBar<T>> {
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: scheme.surface.withOpacity(0.55),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: scheme.outlineVariant.withOpacity(0.25),
-        ),
+        color: AuraBento.surfaceWhite,
+        borderRadius: BorderRadius.circular(AuraBento.radiusFull),
+        boxShadow: AuraBento.ambientSm(const Color(0xFF111827)),
       ),
       child: Wrap(
         spacing: 6,
@@ -572,19 +570,12 @@ class _LiquidGooeyButtonState extends State<LiquidGooeyButton>
     final scheme = Theme.of(context).colorScheme;
     final isPrimary = widget.primary || widget.active;
 
-    final bgGradient = isPrimary
-        ? LinearGradient(
-            colors: <Color>[
-              scheme.primary,
-              scheme.secondary,
-            ],
-          )
-        : LinearGradient(
-            colors: <Color>[
-              scheme.surfaceContainerHighest.withOpacity(0.70),
-              scheme.surface.withOpacity(0.85),
-            ],
-          );
+    // Aura-Bento pills: black anchor for primary/active, white capsule
+    // otherwise. Molten droplet accent recolored to the blue action token.
+    final Color? bg = isPrimary ? AuraBento.accentDarkAction : AuraBento.surfaceWhite;
+    final Gradient? bgGradient = null;
+    final Color foreground =
+        isPrimary ? AuraBento.textInverted : scheme.onSurface;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -603,28 +594,29 @@ class _LiquidGooeyButtonState extends State<LiquidGooeyButton>
               vertical: widget.compact ? 8 : 13,
             ),
             decoration: BoxDecoration(
+              color: bg,
               gradient: bgGradient,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: isPrimary
-                    ? scheme.primary.withOpacity(0.6)
-                    : scheme.outlineVariant.withOpacity(0.3),
-              ),
-              boxShadow: <BoxShadow>[
-                if (isPrimary || _hovered)
-                  BoxShadow(
-                    color: scheme.primary.withOpacity(_hovered ? 0.40 : 0.22),
-                    blurRadius: _hovered ? 20 : 12,
-                    offset: const Offset(0, 4),
-                  ),
-              ],
+              borderRadius: BorderRadius.circular(AuraBento.radiusFull),
+              border: isPrimary
+                  ? null
+                  : Border.all(color: AuraBento.surfacePillNeutralSolid),
+              boxShadow: isPrimary || _hovered
+                  ? <BoxShadow>[
+                      BoxShadow(
+                        color: const Color(0xFF111827)
+                            .withAlpha(_hovered ? 42 : 28),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ]
+                  : const <BoxShadow>[],
             ),
             child: Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: <Widget>[
-                // Liquid molten bubble accent that peaks on hover
-                if (_hovered || isPrimary)
+                // Molten bubble accent, recolored to the aura action blue.
+                if (_hovered)
                   Positioned(
                     right: -4,
                     top: -4,
@@ -637,10 +629,10 @@ class _LiquidGooeyButtonState extends State<LiquidGooeyButton>
                           height: 8 + wave * 2,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: scheme.secondary.withOpacity(0.8),
+                            color: AuraBento.accentBlueAction.withAlpha(204),
                             boxShadow: <BoxShadow>[
                               BoxShadow(
-                                color: scheme.secondary,
+                                color: AuraBento.accentBlueAction,
                                 blurRadius: 8,
                               ),
                             ],
@@ -657,17 +649,17 @@ class _LiquidGooeyButtonState extends State<LiquidGooeyButton>
                       Icon(
                         widget.icon,
                         size: widget.compact ? 15 : 18,
-                        color: isPrimary ? scheme.onPrimary : scheme.onSurface,
+                        color: foreground,
                       ),
                       const SizedBox(width: 8),
                     ],
                     Text(
                       widget.label,
                       style: TextStyle(
-                        color: isPrimary ? scheme.onPrimary : scheme.onSurface,
-                        fontWeight: FontWeight.w800,
+                        color: foreground,
+                        fontWeight: FontWeight.w600,
                         fontSize: widget.compact ? 12 : 14,
-                        letterSpacing: 0.2,
+                        letterSpacing: -0.1,
                       ),
                     ),
                   ],
@@ -1346,9 +1338,6 @@ class LiquidGooeyDock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final items = <Map<String, dynamic>>[
       {'label': 'Home', 'icon': Icons.home_rounded},
       {'label': 'Projects', 'icon': Icons.grid_view_rounded},
@@ -1356,22 +1345,19 @@ class LiquidGooeyDock extends StatelessWidget {
       {'label': 'Admin', 'icon': Icons.admin_panel_settings_outlined},
     ];
 
+    // Floating anchor dock (§3.2 z-anchor): white capsule on the aura canvas.
     return ClipRRect(
-      borderRadius: BorderRadius.circular(999),
+      borderRadius: BorderRadius.circular(AuraBento.radiusFull),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
-          color: (isDark ? const Color(0xFF1E1B24) : Colors.white).withValues(alpha: 0.88),
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(
-            color: (isDark ? Colors.white24 : scheme.primary.withValues(alpha: 0.22)),
-            width: 1.2,
-          ),
+          color: AuraBento.surfaceWhite.withAlpha(242),
+          borderRadius: BorderRadius.circular(AuraBento.radiusFull),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.14),
-              blurRadius: 22,
-              offset: const Offset(0, 6),
+              color: const Color(0xFF111827).withAlpha(20),
+              blurRadius: 28,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
@@ -1422,11 +1408,9 @@ class _LiquidDockItemState extends State<_LiquidDockItem> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final textColor = widget.active
-        ? Colors.white
-        : (isDark ? Colors.white : scheme.onSurface);
+        ? AuraBento.textInverted
+        : (scheme.onSurface.withAlpha(_hovered ? 255 : 170));
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -1444,39 +1428,17 @@ class _LiquidDockItemState extends State<_LiquidDockItem> {
             curve: Curves.easeOutCubic,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
             decoration: BoxDecoration(
-              gradient: widget.active
-                  ? LinearGradient(
-                      colors: <Color>[
-                        scheme.primary,
-                        scheme.secondary,
-                      ],
-                    )
-                  : (_hovered
-                      ? LinearGradient(
-                          colors: <Color>[
-                            (isDark ? Colors.white : scheme.primary).withValues(alpha: 0.15),
-                            (isDark ? Colors.white : scheme.secondary).withValues(alpha: 0.10),
-                          ],
-                        )
-                      : null),
+              // Active tab: black anchor pill (§1.1 high-contrast anchor).
               color: widget.active
-                  ? null
+                  ? AuraBento.accentDarkAction
                   : (_hovered
-                      ? Colors.white.withValues(alpha: 0.12)
+                      ? AuraBento.surfacePillNeutral
                       : Colors.transparent),
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: widget.active
-                    ? scheme.primary.withValues(alpha: 0.55)
-                    : (_hovered
-                        ? (isDark ? Colors.white : scheme.primary).withValues(alpha: 0.35)
-                        : Colors.transparent),
-                width: 1.0,
-              ),
+              borderRadius: BorderRadius.circular(AuraBento.radiusFull),
               boxShadow: widget.active
                   ? <BoxShadow>[
                       BoxShadow(
-                        color: scheme.primary.withValues(alpha: 0.45),
+                        color: const Color(0xFF111827).withAlpha(46),
                         blurRadius: 14,
                         offset: const Offset(0, 4),
                       ),
@@ -1497,18 +1459,10 @@ class _LiquidDockItemState extends State<_LiquidDockItem> {
                   widget.label,
                   style: TextStyle(
                     color: textColor,
-                    fontWeight: widget.active ? FontWeight.w800 : FontWeight.w700,
+                    fontWeight: widget.active ? FontWeight.w600 : FontWeight.w500,
                     fontSize: 13,
-                    letterSpacing: 0.2,
+                    letterSpacing: -0.1,
                     height: 1.2,
-                    shadows: widget.active
-                        ? null
-                        : <Shadow>[
-                            Shadow(
-                              color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.8),
-                              blurRadius: 4,
-                            ),
-                          ],
                   ),
                 ),
               ],

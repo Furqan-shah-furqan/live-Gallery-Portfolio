@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_theme.dart';
+import '../core/aura_bento.dart';
 import '../models/project_model.dart';
 import '../services/project_store.dart';
 import '../widgets/animated_mesh_background.dart';
@@ -240,9 +241,8 @@ class _ProjectPreviewSectionState extends State<_ProjectPreviewSection> {
     return AnimatedEntrance(
       delay: const Duration(milliseconds: 180),
       child: GlassSurface(
-        radius: 45,
-        opacity: 0.80,
-        padding: const EdgeInsets.all(28),
+        radius: AuraBento.radiusXl,
+        padding: const EdgeInsets.all(AuraBento.space8 - 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -253,22 +253,26 @@ class _ProjectPreviewSectionState extends State<_ProjectPreviewSection> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     const SectionEyebrow('Selected live systems'),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AuraBento.space3),
                     Text(
                       'Hover to expand every project story.',
-                      style:
-                          Theme.of(context).textTheme.displayMedium?.copyWith(
-                                fontSize: constraints.maxWidth < 600 ? 38 : 52,
-                              ),
+                      style: TextStyle(
+                        fontFamily: AuraBento.fontSerif,
+                        color: AuraBento.textPrimary,
+                        fontSize: constraints.maxWidth < 600 ? 34 : 46,
+                        height: 1.08,
+                        letterSpacing: -0.4,
+                      ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: AuraBento.space2),
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 720),
-                      child: const Text(
+                      child: Text(
                         'The first project opens in landscape by default. Move across the gallery to expand any other live system.',
                         style: TextStyle(
-                          color: AppColors.inkMuted,
+                          color: AuraBento.textSecondary,
                           height: 1.6,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -276,8 +280,8 @@ class _ProjectPreviewSectionState extends State<_ProjectPreviewSection> {
                 );
 
                 final actions = Wrap(
-                  spacing: 12,
-                  runSpacing: 10,
+                  spacing: AuraBento.space3,
+                  runSpacing: AuraBento.space2,
                   children: <Widget>[
                     PremiumButton(
                       label: 'Explore Gallery',
@@ -288,7 +292,6 @@ class _ProjectPreviewSectionState extends State<_ProjectPreviewSection> {
                     PremiumButton(
                       label: 'Admin Control',
                       icon: Icons.admin_panel_settings_rounded,
-                      primary: false,
                       onPressed: widget.onAdmin,
                     ),
                   ],
@@ -299,7 +302,7 @@ class _ProjectPreviewSectionState extends State<_ProjectPreviewSection> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       heading,
-                      const SizedBox(height: 18),
+                      const SizedBox(height: AuraBento.space4),
                       actions,
                     ],
                   );
@@ -309,13 +312,13 @@ class _ProjectPreviewSectionState extends State<_ProjectPreviewSection> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Expanded(child: heading),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: AuraBento.space5),
                     actions,
                   ],
                 );
               },
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: AuraBento.space6),
             if (widget.projects.isEmpty)
               _EmptyProjects(onAdmin: widget.onAdmin)
             else
@@ -455,24 +458,12 @@ class _AccordionProjectCardState extends State<_AccordionProjectCard> {
           duration: const Duration(milliseconds: 620),
           curve: const Cubic(0.22, 1, 0.36, 1),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(35),
-            color: Colors.white.withOpacity(0.74),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: AppColors.softShadow.withOpacity(active ? 0.78 : 0.52),
-                blurRadius: active ? 44 : 28,
-                offset: const Offset(0, 20),
-              ),
-              if (active)
-                BoxShadow(
-                  color: AppColors.cyan.withOpacity(0.10),
-                  blurRadius: 52,
-                  spreadRadius: 2,
-                ),
-            ],
+            borderRadius: BorderRadius.circular(AuraBento.radiusLg),
+            color: AuraBento.surfaceWhite,
+            boxShadow: AuraBento.ambientMd(const Color(0xFF111827)),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(35),
+            borderRadius: BorderRadius.circular(AuraBento.radiusLg),
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
@@ -507,9 +498,9 @@ class _AccordionProjectCardState extends State<_AccordionProjectCard> {
                 ),
                 if (active)
                   Positioned(
-                    left: 26,
-                    right: 26,
-                    bottom: 24,
+                    left: AuraBento.space6 - 2,
+                    right: AuraBento.space6 - 2,
+                    bottom: AuraBento.space6,
                     child: AnimatedOpacity(
                       opacity: active ? 1 : 0,
                       duration: const Duration(milliseconds: 520),
@@ -522,14 +513,14 @@ class _AccordionProjectCardState extends State<_AccordionProjectCard> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              color: AppColors.ink,
-                              fontSize: 30,
-                              height: 1.0,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -1.4,
+                              color: AuraBento.textPrimary,
+                              fontSize: 28,
+                              height: 1.05,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.6,
                             ),
                           ),
-                          const SizedBox(height: 9),
+                          const SizedBox(height: AuraBento.space2),
                           Row(
                             children: <Widget>[
                               Flexible(
@@ -538,16 +529,16 @@ class _AccordionProjectCardState extends State<_AccordionProjectCard> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: AppColors.inkMuted,
+                                    color: AuraBento.textSecondary,
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 9),
+                              const SizedBox(width: AuraBento.space2),
                               const Icon(
                                 Icons.arrow_outward_rounded,
-                                color: AppColors.ink,
+                                color: AuraBento.textPrimary,
                                 size: 18,
                               ),
                             ],
@@ -558,7 +549,7 @@ class _AccordionProjectCardState extends State<_AccordionProjectCard> {
                   )
                 else ...<Widget>[
                   Positioned(
-                    bottom: 18,
+                    bottom: AuraBento.space4,
                     left: 0,
                     right: 0,
                     child: Column(
@@ -567,27 +558,23 @@ class _AccordionProjectCardState extends State<_AccordionProjectCard> {
                           width: 44,
                           height: 44,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white.withOpacity(0.90),
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                color: AppColors.softShadow.withOpacity(0.65),
-                                blurRadius: 20,
-                                offset: const Offset(0, 9),
-                              ),
-                            ],
+                            shape: BoxShape.circle,
+                            color: AuraBento.surfaceWhite,
+                            boxShadow:
+                                AuraBento.ambientSm(const Color(0xFF111827)),
                           ),
                           child: Center(
                             child: Text(
                               '${widget.index + 1}'.padLeft(2, '0'),
                               style: const TextStyle(
-                                color: AppColors.ink,
-                                fontWeight: FontWeight.w900,
+                                color: AuraBento.textPrimary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AuraBento.space3),
                         RotatedBox(
                           quarterTurns: 3,
                           child: SizedBox(
@@ -598,9 +585,9 @@ class _AccordionProjectCardState extends State<_AccordionProjectCard> {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                color: AppColors.ink,
+                                color: AuraBento.textPrimary,
                                 fontSize: 12,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 0.2,
                               ),
                             ),
@@ -659,11 +646,13 @@ class _AccordionProjectMedia extends StatelessWidget {
           switchInCurve: const Cubic(0.22, 1, 0.36, 1),
           child: ColoredBox(
             key: ValueKey<bool>(active),
-            color: const Color(0xFFFFF7F3),
+            color: AuraBento.canvasLightSecondary,
             child: Padding(
-              padding: EdgeInsets.all(active ? 12 : 0),
+              padding: EdgeInsets.all(active ? AuraBento.space3 : 0),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(
+                  AuraBento.innerRadius(AuraBento.radiusLg, AuraBento.space3),
+                ),
                 child: Image.memory(
                   bytes,
                   fit: active ? BoxFit.contain : BoxFit.cover,
@@ -689,7 +678,7 @@ class _AccordionProjectMedia extends StatelessWidget {
             right: -50,
             child: _DashboardOrb(
               size: 220,
-              color: AppColors.orange.withOpacity(0.40),
+              color: const Color(0x66FFC896),
             ),
           ),
           Positioned(
@@ -697,7 +686,7 @@ class _AccordionProjectMedia extends StatelessWidget {
             bottom: -70,
             child: _DashboardOrb(
               size: 240,
-              color: AppColors.hotPink.withOpacity(0.32),
+              color: const Color(0x73B4BEFF),
             ),
           ),
           Center(
@@ -706,23 +695,17 @@ class _AccordionProjectMedia extends StatelessWidget {
               duration: const Duration(milliseconds: 620),
               curve: const Cubic(0.22, 1, 0.36, 1),
               child: Container(
-                width: active ? 92 : 54,
-                height: active ? 92 : 54,
+                width: active ? 88 : 52,
+                height: active ? 88 : 52,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.76),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: AppColors.softShadow.withOpacity(0.48),
-                      blurRadius: 28,
-                      offset: const Offset(0, 12),
-                    ),
-                  ],
+                  color: AuraBento.surfaceWhite,
+                  boxShadow: AuraBento.ambientMd(const Color(0xFF111827)),
                 ),
                 child: Icon(
                   _accordionIcon(project),
-                  color: AppColors.ink,
-                  size: active ? 40 : 24,
+                  color: AuraBento.textPrimary,
+                  size: active ? 36 : 22,
                 ),
               ),
             ),
@@ -733,6 +716,7 @@ class _AccordionProjectMedia extends StatelessWidget {
   }
 }
 
+/// Soft aura-tinted fallback gradients (mesh-card family) keyed by project name.
 LinearGradient _accordionGradient(ProjectModel project) {
   final index =
       project.name.codeUnits.fold<int>(0, (sum, value) => sum + value) % 4;
@@ -742,9 +726,9 @@ LinearGradient _accordionGradient(ProjectModel project) {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: <Color>[
-          Color(0xFFFFF4EC),
-          Color(0xFFFFC79F),
-          Color(0xFFFF6D83)
+          Color(0xFFFFF1E8),
+          Color(0xFFFFC9A8),
+          Color(0xFFB9C0FF),
         ],
       );
     case 1:
@@ -752,9 +736,9 @@ LinearGradient _accordionGradient(ProjectModel project) {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: <Color>[
-          Color(0xFFFFE9E1),
-          Color(0xFFFFA66F),
-          Color(0xFFF64A76)
+          Color(0xFFFFE9DC),
+          Color(0xFFFFB28F),
+          Color(0xFF9FAEFF),
         ],
       );
     case 2:
@@ -762,9 +746,9 @@ LinearGradient _accordionGradient(ProjectModel project) {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: <Color>[
-          Color(0xFFFFF0F3),
-          Color(0xFFFF9BAE),
-          Color(0xFFFF6F67)
+          Color(0xFFF2EEFF),
+          Color(0xFFD9CBFA),
+          Color(0xFFFFC9A8),
         ],
       );
     default:
@@ -772,9 +756,9 @@ LinearGradient _accordionGradient(ProjectModel project) {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: <Color>[
-          Color(0xFFFFF3E7),
-          Color(0xFFFFB66F),
-          Color(0xFFE93B6F)
+          Color(0xFFEFF3FF),
+          Color(0xFFC3CDFB),
+          Color(0xFFFFB28F),
         ],
       );
   }
@@ -803,72 +787,60 @@ class _EmptyProjects extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 54),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AuraBento.space6,
+        vertical: 54,
+      ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(45),
+        borderRadius: BorderRadius.circular(AuraBento.radiusLg),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: <Color>[
-            Color(0xFFFFFFFF),
-            Color(0xFFFFEFE6),
-            Color(0xFFFFD9DF),
+            Color(0xFFF6F7FA),
+            Color(0xFFFDEFE4),
+            Color(0xFFE9ECFB),
           ],
         ),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: AppColors.softShadow.withOpacity(0.50),
-            blurRadius: 34,
-            offset: const Offset(0, 18),
-          ),
-        ],
       ),
       child: Column(
         children: <Widget>[
           Container(
-            width: 74,
-            height: 74,
+            width: 64,
+            height: 64,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: <Color>[
-                  AppColors.orange,
-                  AppColors.coral,
-                  AppColors.hotPink
-                ],
-              ),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: AppColors.hotPink.withOpacity(0.24),
-                  blurRadius: 30,
-                  offset: const Offset(0, 14),
-                ),
-              ],
+              color: AuraBento.surfaceWhite,
+              boxShadow: AuraBento.ambientMd(const Color(0xFF111827)),
             ),
             child: const Icon(
               Icons.add_photo_alternate_outlined,
-              color: Colors.white,
-              size: 34,
+              color: AuraBento.accentOrange,
+              size: 28,
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: AuraBento.space4),
           const Text(
             'No Projects added Yet',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.ink,
+              fontFamily: AuraBento.fontSerif,
+              color: AuraBento.textPrimary,
               fontSize: 28,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1.1,
+              letterSpacing: -0.3,
             ),
           ),
-          const SizedBox(height: 9),
+          const SizedBox(height: AuraBento.space2),
           const Text(
             'Open Admin Control to add project details, screenshots, technology, and a live link.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.inkMuted, height: 1.6),
+            style: TextStyle(
+              color: AuraBento.textSecondary,
+              height: 1.6,
+              fontSize: 13,
+            ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AuraBento.space5),
           PremiumButton(
             label: 'Open Admin Control',
             icon: Icons.lock_open_rounded,
@@ -881,7 +853,6 @@ class _EmptyProjects extends StatelessWidget {
   }
 }
 
-
 class _ContactSection extends StatelessWidget {
   const _ContactSection({required this.onEmail, required this.onWhatsApp});
 
@@ -893,9 +864,8 @@ class _ContactSection extends StatelessWidget {
     return AnimatedEntrance(
       delay: const Duration(milliseconds: 340),
       child: GlassSurface(
-        radius: 45,
-        opacity: 0.075,
-        padding: const EdgeInsets.all(30),
+        radius: AuraBento.radiusXl,
+        padding: const EdgeInsets.all(AuraBento.space8 - 2),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final wide = constraints.maxWidth >= 800;
@@ -903,28 +873,32 @@ class _ContactSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const SectionEyebrow('Contact'),
-                const SizedBox(height: 12),
+                const SizedBox(height: AuraBento.space3),
                 Text(
                   'Have a useful product idea? Let’s build it.',
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        fontSize: constraints.maxWidth < 600 ? 38 : 52,
-                      ),
+                  style: TextStyle(
+                    fontFamily: AuraBento.fontSerif,
+                    color: AuraBento.textPrimary,
+                    fontSize: constraints.maxWidth < 600 ? 34 : 46,
+                    height: 1.08,
+                    letterSpacing: -0.4,
+                  ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: AuraBento.space3),
                 const Text(
                   'Share the problem, users, and desired result. I can help turn it into a clean, responsive product.',
                   style: TextStyle(
-                    color: AppColors.inkMuted,
+                    color: AuraBento.textSecondary,
                     height: 1.65,
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
               ],
             );
 
             final actions = Wrap(
-              spacing: 12,
-              runSpacing: 12,
+              spacing: AuraBento.space3,
+              runSpacing: AuraBento.space3,
               children: <Widget>[
                 PremiumButton(
                   label: 'Send Email',
@@ -945,7 +919,7 @@ class _ContactSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   copy,
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AuraBento.space6),
                   actions,
                 ],
               );
@@ -955,7 +929,7 @@ class _ContactSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Expanded(child: copy),
-                const SizedBox(width: 30),
+                const SizedBox(width: AuraBento.space8),
                 actions,
               ],
             );
@@ -979,9 +953,9 @@ class _Footer extends StatelessWidget {
             child: Text(
               '© 2026 Furqan · Live Systems Gallery',
               style: TextStyle(
-                color: AppColors.inkMuted,
+                color: AuraBento.textSecondary,
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -990,16 +964,16 @@ class _Footer extends StatelessWidget {
             height: 8,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.green,
+              color: AuraBento.accentBlueAction,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AuraBento.space2),
           const Text(
             'Built in Flutter',
             style: TextStyle(
-              color: AppColors.inkMuted,
+              color: AuraBento.textSecondary,
               fontSize: 12,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

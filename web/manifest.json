@@ -3,8 +3,8 @@
   "short_name": "Live Systems",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#FFA45F",
-  "theme_color": "#F64670",
+  "background_color": "#E9EBEF",
+  "theme_color": "#E9EBEF",
   "description": "Premium developer portfolio with local admin control.",
   "orientation": "portrait-primary",
   "prefer_related_applications": false

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/app_theme.dart';
+import '../core/aura_bento.dart';
 import '../core/theme_controller.dart';
 import '../widgets/animated_mesh_background.dart';
 import '../widgets/glass_surface.dart';
@@ -16,7 +17,6 @@ class ThemePage extends StatelessWidget {
     final controller = ThemeControllerScope.of(context);
 
     return AnimatedMeshBackground(
-      darkness: 0.32,
       child: Scaffold(
         extendBody: true,
         bottomNavigationBar: SafeArea(
@@ -47,60 +47,83 @@ class ThemePage extends StatelessWidget {
             animation: controller,
             builder: (context, _) {
               return SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 14, 20, 100),
+                padding:
+                    const EdgeInsets.fromLTRB(20, 14, 20, 100),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1280),
+                    constraints:
+                        const BoxConstraints(maxWidth: 1280),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
                       children: <Widget>[
                         _ThemeHeader(
                           currentName: controller.palette.name,
-                          onBack: () => Navigator.of(context).pop(),
+                          onBack: () =>
+                              Navigator.of(context).pop(),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(
+                            height: AuraBento.space4),
                         GlassSurface(
-                          radius: 45,
-                          padding: const EdgeInsets.all(26),
-                          opacity: 0.10,
+                          radius: AuraBento.radiusXl,
+                          padding: const EdgeInsets.all(
+                              AuraBento.space6 + 2),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                'Choose your portfolio atmosphere',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displayMedium
-                                    ?.copyWith(fontSize: 46),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'Switch instantly between the original look and the five supplied color palettes. Your selection is remembered on this device.',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(fontSize: 16),
-                              ),
-                              const SizedBox(height: 24),
                               LayoutBuilder(
                                 builder: (context, constraints) {
-                                  final columns = constraints.maxWidth >= 980
-                                      ? 3
-                                      : constraints.maxWidth >= 620
-                                          ? 2
-                                          : 1;
-                                  final ratio = columns == 1 ? 1.35 : 0.96;
+                                  final wide =
+                                      constraints.maxWidth >= 600;
+                                  return Text(
+                                    'Choose your portfolio atmosphere',
+                                    style: TextStyle(
+                                      fontFamily:
+                                          AuraBento.fontSerif,
+                                      color: AuraBento.textPrimary,
+                                      fontSize: wide ? 40 : 32,
+                                      height: 1.08,
+                                      letterSpacing: -0.4,
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(
+                                  height: AuraBento.space3),
+                              Text(
+                                'Switch instantly between six Aura-Bento atmospheres. Every theme keeps the same neutral canvas, white bento surfaces, and accessible anchors — only the aura changes.',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge,
+                              ),
+                              const SizedBox(
+                                  height: AuraBento.space6),
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final columns =
+                                      constraints.maxWidth >= 980
+                                          ? 3
+                                          : constraints.maxWidth >= 620
+                                              ? 2
+                                              : 1;
+                                  final ratio = columns == 1
+                                      ? 1.35
+                                      : 0.96;
 
                                   return GridView.builder(
                                     shrinkWrap: true,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
-                                    itemCount: portfolioPalettes.length,
+                                    itemCount:
+                                        portfolioPalettes.length,
                                     gridDelegate:
                                         SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: columns,
-                                      crossAxisSpacing: 16,
-                                      mainAxisSpacing: 16,
+                                      crossAxisSpacing:
+                                          AuraBento.space4,
+                                      mainAxisSpacing:
+                                          AuraBento.space4,
                                       childAspectRatio: ratio,
                                     ),
                                     itemBuilder: (context, index) {
@@ -108,10 +131,10 @@ class ThemePage extends StatelessWidget {
                                           portfolioPalettes[index];
                                       return _ThemeCard(
                                         palette: palette,
-                                        selected:
-                                            palette.id == controller.themeId,
-                                        onTap: () =>
-                                            controller.select(palette.id),
+                                        selected: palette.id ==
+                                            controller.themeId,
+                                        onTap: () => controller
+                                            .select(palette.id),
                                       );
                                     },
                                   );
@@ -144,29 +167,30 @@ class _ThemeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return GlassSurface(
-      radius: 26,
-      opacity: 0.08,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      radius: AuraBento.radiusMd + 6,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AuraBento.space4,
+        vertical: AuraBento.space3 - 1,
+      ),
       child: Row(
         children: <Widget>[
-          IconButton.filled(
+          AuraCircularToken(
+            icon: Icons.arrow_back_rounded,
+            variant: AuraCircularTokenVariant.pitchBlack,
             tooltip: 'Back',
-            onPressed: onBack,
-            icon: const Icon(Icons.arrow_back_rounded),
+            onTap: onBack,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AuraBento.space3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
+                const Text(
                   'THEME STUDIO',
                   style: TextStyle(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w900,
+                    color: AuraBento.textTertiary,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.8,
                     fontSize: 10,
                   ),
@@ -176,15 +200,19 @@ class _ThemeHeader extends StatelessWidget {
                   'Current theme: $currentName',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.w900,
+                  style: const TextStyle(
+                    color: AuraBento.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
                   ),
                 ),
               ],
             ),
           ),
-          Icon(Icons.palette_outlined, color: scheme.primary),
+          const Icon(
+            Icons.palette_outlined,
+            color: AuraBento.accentBlueAction,
+          ),
         ],
       ),
     );
@@ -225,17 +253,20 @@ class _ThemeCardState extends State<_ThemeCard> {
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 520),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AuraBento.space3),
             decoration: BoxDecoration(
-              color: palette.surface.withOpacity(0.93),
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: palette.ink.withOpacity(_hovered ? 0.20 : 0.12),
-                  blurRadius: _hovered ? 34 : 24,
-                  offset: const Offset(0, 14),
-                ),
-              ],
+              color: AuraBento.surfaceWhite,
+              borderRadius:
+                  BorderRadius.circular(AuraBento.radiusLg),
+              border: widget.selected
+                  ? Border.all(
+                      color: palette.primary,
+                      width: 2,
+                    )
+                  : null,
+              boxShadow: AuraBento.ambientMd(
+                const Color(0xFF111827),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,9 +274,13 @@ class _ThemeCardState extends State<_ThemeCard> {
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(
+                        AuraBento.space4 + 2),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(
+                        AuraBento.innerRadius(
+                            AuraBento.radiusLg, AuraBento.space3),
+                      ),
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -258,17 +293,22 @@ class _ThemeCardState extends State<_ThemeCard> {
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.end,
                         children: palette.colors
                             .map(
                               (color) => Expanded(
                                 child: Container(
                                   height: 74 +
-                                      palette.colors.indexOf(color) * 7,
+                                      palette.colors
+                                              .indexOf(color) *
+                                          7,
                                   decoration: BoxDecoration(
                                     color: color,
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(14),
+                                    borderRadius:
+                                        const BorderRadius
+                                            .vertical(
+                                      top: Radius.circular(8),
                                     ),
                                   ),
                                 ),
@@ -279,40 +319,42 @@ class _ThemeCardState extends State<_ThemeCard> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: AuraBento.space3 + 2),
                 Row(
                   children: <Widget>[
                     Expanded(
                       child: Text(
                         palette.name,
-                        style: TextStyle(
-                          color: palette.ink,
-                          fontSize: 19,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.5,
+                        style: const TextStyle(
+                          color: AuraBento.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
                         ),
                       ),
                     ),
                     AnimatedContainer(
-                      duration: const Duration(milliseconds: 420),
+                      duration:
+                          const Duration(milliseconds: 420),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 7,
                       ),
                       decoration: BoxDecoration(
                         color: widget.selected
-                            ? palette.primary
-                            : palette.surfaceAlt,
-                        borderRadius: BorderRadius.circular(999),
+                            ? AuraBento.accentDarkAction
+                            : AuraBento.badgeNeutralBg,
+                        borderRadius: BorderRadius.circular(
+                            AuraBento.radiusFull),
                       ),
                       child: Text(
                         widget.selected ? 'ACTIVE' : 'USE',
                         style: TextStyle(
                           color: widget.selected
-                              ? Colors.white
-                              : palette.ink,
+                              ? AuraBento.textInverted
+                              : AuraBento.badgeNeutralText,
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 0.8,
                         ),
                       ),
@@ -324,8 +366,8 @@ class _ThemeCardState extends State<_ThemeCard> {
                   palette.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: palette.muted,
+                  style: const TextStyle(
+                    color: AuraBento.textSecondary,
                     fontSize: 12,
                     height: 1.35,
                   ),

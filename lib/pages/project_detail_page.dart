@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_theme.dart';
+import '../core/aura_bento.dart';
 import '../models/project_model.dart';
 import '../services/project_store.dart';
 import '../widgets/animated_mesh_background.dart';
@@ -36,7 +37,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
     final store = ProjectStoreScope.of(context);
 
     return AnimatedMeshBackground(
-      darkness: 0.92,
       child: Scaffold(
         body: SafeArea(
           child: AnimatedBuilder(
@@ -54,23 +54,25 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
               if (project == null) {
                 return Center(
                   child: GlassSurface(
-                    radius: 30,
+                    radius: AuraBento.radiusXl,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         const Icon(
                           Icons.error_outline_rounded,
                           size: 48,
+                          color: AuraBento.textTertiary,
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: AuraBento.space3),
                         const Text(
                           'Project not found',
                           style: TextStyle(
+                            fontFamily: AuraBento.fontSerif,
                             fontSize: 26,
-                            fontWeight: FontWeight.w900,
+                            color: AuraBento.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: AuraBento.space4),
                         PremiumButton(
                           label: 'Go Back',
                           onPressed: () => Navigator.of(context).pop(),
@@ -101,7 +103,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                             );
                           },
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AuraBento.space3),
                         LayoutBuilder(
                           builder: (context, constraints) {
                             final bool wide =
@@ -121,7 +123,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                             );
 
                             if (wide) {
-                              const double gap = 20;
+                              const double gap = AuraBento.cardGapDesktop;
 
                               final double galleryWidth =
                                   (constraints.maxWidth - gap) * 7 / 11;
@@ -167,7 +169,8 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                                   height: mobileGalleryHeight,
                                   child: gallery,
                                 ),
-                                const SizedBox(height: 14),
+                                const SizedBox(
+                                    height: AuraBento.space3 + 2),
                                 _ProjectDetails(
                                   project: project,
                                   fillAvailableHeight: false,
@@ -247,25 +250,20 @@ class _DetailHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedEntrance(
       child: GlassSurface(
-        radius: 26,
-        opacity: 0.075,
+        radius: AuraBento.radiusMd + 6,
         padding: const EdgeInsets.symmetric(
-          horizontal: 18,
-          vertical: 10,
+          horizontal: AuraBento.space4 + 2,
+          vertical: AuraBento.space2 + 2,
         ),
         child: Row(
           children: <Widget>[
-            IconButton.filled(
-              onPressed: onBack,
-              style: IconButton.styleFrom(
-                backgroundColor:
-                    Colors.white.withOpacity(0.09),
-              ),
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-              ),
+            AuraCircularToken(
+              icon: Icons.arrow_back_rounded,
+              variant: AuraCircularTokenVariant.pitchBlack,
+              tooltip: 'Back',
+              onTap: onBack,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AuraBento.space3),
             Expanded(
               child: Column(
                 crossAxisAlignment:
@@ -274,8 +272,8 @@ class _DetailHeader extends StatelessWidget {
                   const Text(
                     'PROJECT VIEW',
                     style: TextStyle(
-                      color: AppColors.inkMuted,
-                      fontWeight: FontWeight.w900,
+                      color: AuraBento.textTertiary,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: 1.7,
                       fontSize: 10,
                     ),
@@ -286,17 +284,19 @@ class _DetailHeader extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: AppColors.ink,
-                      fontWeight: FontWeight.w900,
+                      color: AuraBento.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
                     ),
                   ),
                 ],
               ),
             ),
-            IconButton.filled(
+            AuraCircularToken(
+              icon: Icons.palette_outlined,
+              variant: AuraCircularTokenVariant.pureWhite,
               tooltip: 'Themes',
-              onPressed: onThemes,
-              icon: const Icon(Icons.palette_outlined),
+              onTap: onThemes,
             ),
           ],
         ),
@@ -330,14 +330,16 @@ class _ProjectGallery extends StatelessWidget {
     return AnimatedEntrance(
       delay: const Duration(milliseconds: 90),
       child: GlassSurface(
-        radius: 38,
-        opacity: 0.075,
-        padding: const EdgeInsets.all(10),
+        radius: AuraBento.radiusLg + 2,
+        padding: const EdgeInsets.all(AuraBento.space2 + 2),
         child: Stack(
           children: <Widget>[
             Positioned.fill(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(
+                  AuraBento.innerRadius(
+                      AuraBento.radiusLg + 2, AuraBento.space2 + 2),
+                ),
                 child: PageView.builder(
                   controller: pageController,
                   itemCount: count,
@@ -359,9 +361,10 @@ class _ProjectGallery extends StatelessWidget {
                     }
 
                     return ColoredBox(
-                      color: Colors.white.withOpacity(0.035),
+                      color: AuraBento.canvasLightSecondary,
                       child: Padding(
-                        padding: const EdgeInsets.all(6),
+                        padding:
+                            const EdgeInsets.all(AuraBento.space2 - 2),
                         child: Hero(
                           tag: index == 0
                               ? 'project-${project.id}'
@@ -386,9 +389,11 @@ class _ProjectGallery extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding:
-                      const EdgeInsets.only(left: 8),
-                  child: _RoundControl(
+                      const EdgeInsets.only(left: AuraBento.space2),
+                  child: AuraCircularToken(
                     icon: Icons.arrow_back_rounded,
+                    variant: AuraCircularTokenVariant.pureWhite,
+                    tooltip: 'Previous screenshot',
                     onTap: onPrevious,
                   ),
                 ),
@@ -397,9 +402,11 @@ class _ProjectGallery extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: Padding(
                   padding:
-                      const EdgeInsets.only(right: 8),
-                  child: _RoundControl(
+                      const EdgeInsets.only(right: AuraBento.space2),
+                  child: AuraCircularToken(
                     icon: Icons.arrow_forward_rounded,
+                    variant: AuraCircularTokenVariant.pureWhite,
+                    tooltip: 'Next screenshot',
                     onTap: onNext,
                   ),
                 ),
@@ -408,7 +415,7 @@ class _ProjectGallery extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding:
-                      const EdgeInsets.only(bottom: 14),
+                      const EdgeInsets.only(bottom: AuraBento.space3 + 2),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children:
@@ -430,9 +437,9 @@ class _ProjectGallery extends StatelessWidget {
                           borderRadius:
                               BorderRadius.circular(999),
                           color: index == pageIndex
-                              ? AppColors.ink
-                              : AppColors.ink
-                                  .withOpacity(0.18),
+                              ? AuraBento.accentBlueAction
+                              : AuraBento.textPrimary
+                                  .withAlpha(36),
                         ),
                       ),
                     ),
@@ -464,9 +471,9 @@ class _EmptyGallery extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: <Color>[
-              Color(0xFFFFF3E8),
-              Color(0xFFFFC79F),
-              Color(0xFFFF6B84),
+              Color(0xFFFFF1E8),
+              Color(0xFFFFC9A8),
+              Color(0xFFB9C0FF),
             ],
           ),
         ),
@@ -477,35 +484,35 @@ class _EmptyGallery extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Container(
-                  width: 96,
-                  height: 96,
+                  width: 84,
+                  height: 84,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color:
-                        Colors.white.withOpacity(0.10),
+                        AuraBento.surfaceWhite.withAlpha(210),
                   ),
                   child: const Icon(
                     Icons.image_outlined,
-                    color: AppColors.orange,
-                    size: 44,
+                    color: AuraBento.accentOrange,
+                    size: 38,
                   ),
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: AuraBento.space4),
                 Text(
                   project.name,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: AppColors.ink,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -1.2,
+                    fontFamily: AuraBento.fontSerif,
+                    color: AuraBento.textPrimary,
+                    fontSize: 26,
+                    letterSpacing: -0.3,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AuraBento.space2),
                 const Text(
                   'Add screenshots from Admin Control',
                   style: TextStyle(
-                    color: AppColors.inkMuted,
+                    color: AuraBento.textSecondary,
                   ),
                 ),
               ],
@@ -513,29 +520,6 @@ class _EmptyGallery extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _RoundControl extends StatelessWidget {
-  const _RoundControl({
-    required this.icon,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton.filled(
-      onPressed: onTap,
-      style: IconButton.styleFrom(
-        backgroundColor:
-            Colors.white.withOpacity(0.90),
-        foregroundColor: AppColors.ink,
-      ),
-      icon: Icon(icon),
     );
   }
 }
@@ -556,9 +540,8 @@ class _ProjectDetails extends StatelessWidget {
     return AnimatedEntrance(
       delay: const Duration(milliseconds: 150),
       child: GlassSurface(
-        radius: 38,
-        opacity: 0.085,
-        padding: const EdgeInsets.all(22),
+        radius: AuraBento.radiusLg + 2,
+        padding: const EdgeInsets.all(AuraBento.space5 + 2),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final bool compact =
@@ -580,13 +563,13 @@ class _ProjectDetails extends StatelessWidget {
                   project.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context)
-                      .textTheme
-                      .displayMedium
-                      ?.copyWith(
-                        fontSize: compact ? 38 : 44,
-                        height: 1,
-                      ),
+                  style: TextStyle(
+                    fontFamily: AuraBento.fontSerif,
+                    color: AuraBento.textPrimary,
+                    fontSize: compact ? 34 : 40,
+                    height: 1.05,
+                    letterSpacing: -0.4,
+                  ),
                 ),
 
                 SizedBox(height: compact ? 12 : 16),
@@ -598,9 +581,9 @@ class _ProjectDetails extends StatelessWidget {
                   maxLines: compact ? 3 : 4,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: AppColors.inkMuted,
-                    fontSize: compact ? 14 : 15,
-                    height: 1.5,
+                    color: AuraBento.textSecondary,
+                    fontSize: compact ? 13 : 14,
+                    height: 1.55,
                   ),
                 ),
 
@@ -613,8 +596,9 @@ class _ProjectDetails extends StatelessWidget {
                     vertical: compact ? 12 : 14,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.34),
-                    borderRadius: BorderRadius.circular(22),
+                    color: AuraBento.canvasLightSecondary,
+                    borderRadius:
+                        BorderRadius.circular(AuraBento.radiusMd),
                   ),
                   child: Row(
                     children: <Widget>[
@@ -628,7 +612,8 @@ class _ProjectDetails extends StatelessWidget {
                       Container(
                         width: 1,
                         height: 38,
-                        color: AppColors.ink.withOpacity(0.08),
+                        color:
+                            AuraBento.surfacePillNeutralSolid,
                       ),
                       Expanded(
                         child: _CompactProjectInfo(
@@ -640,7 +625,8 @@ class _ProjectDetails extends StatelessWidget {
                       Container(
                         width: 1,
                         height: 38,
-                        color: AppColors.ink.withOpacity(0.08),
+                        color:
+                            AuraBento.surfacePillNeutralSolid,
                       ),
                       Expanded(
                         child: _CompactProjectInfo(
@@ -658,8 +644,8 @@ class _ProjectDetails extends StatelessWidget {
                 SizedBox(height: compact ? 12 : 16),
 
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: AuraBento.space2,
+                  runSpacing: AuraBento.space2,
                   children: <Widget>[
                     _MetaPill(
                       icon: Icons.schedule_rounded,
@@ -676,7 +662,7 @@ class _ProjectDetails extends StatelessWidget {
                 if (fillAvailableHeight)
                   const Spacer()
                 else
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AuraBento.space4),
 
                 SizedBox(
                   width: double.infinity,
@@ -710,22 +696,22 @@ class _CompactProjectInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AuraBento.space2),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Icon(
             icon,
             size: 17,
-            color: AppColors.orange,
+            color: AuraBento.accentBlueAction,
           ),
           const SizedBox(height: 6),
           Text(
             label,
             style: const TextStyle(
-              color: AppColors.inkMuted,
+              color: AuraBento.textTertiary,
               fontSize: 9,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
             ),
           ),
@@ -736,183 +722,9 @@ class _CompactProjectInfo extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: AppColors.ink,
+              color: AuraBento.textPrimary,
               fontSize: 11,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ignore: unused_element
-class _ProjectSnapshot extends StatelessWidget {
-  const _ProjectSnapshot({
-    required this.project,
-  });
-
-  final ProjectModel project;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool hasLiveProject =
-        project.liveUrl.trim().isNotEmpty;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.32),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Row(
-            children: <Widget>[
-              Icon(
-                Icons.dashboard_customize_outlined,
-                size: 18,
-                color: AppColors.orange,
-              ),
-              SizedBox(width: 8),
-              Text(
-                'PROJECT SNAPSHOT',
-                style: TextStyle(
-                  color: AppColors.ink,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.2,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final double itemWidth =
-                  (constraints.maxWidth - 10) / 2;
-
-              return Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: <Widget>[
-                  SizedBox(
-                    width: itemWidth,
-                    child: _SnapshotItem(
-                      icon: Icons.layers_outlined,
-                      label: 'Technology',
-                      value: project.techStack,
-                    ),
-                  ),
-                  SizedBox(
-                    width: itemWidth,
-                    child: _SnapshotItem(
-                      icon: Icons.photo_library_outlined,
-                      label: 'Project media',
-                      value: project.images.isEmpty
-                          ? 'No screenshots'
-                          : '${project.images.length} screenshots',
-                    ),
-                  ),
-                  SizedBox(
-                    width: itemWidth,
-                    child: _SnapshotItem(
-                      icon: Icons.calendar_today_outlined,
-                      label: 'Added on',
-                      value: project.createdAt,
-                    ),
-                  ),
-                  SizedBox(
-                    width: itemWidth,
-                    child: _SnapshotItem(
-                      icon: hasLiveProject
-                          ? Icons.public_rounded
-                          : Icons.visibility_outlined,
-                      label: 'Availability',
-                      value: hasLiveProject
-                          ? 'Live project'
-                          : 'Preview only',
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SnapshotItem extends StatelessWidget {
-  const _SnapshotItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(
-        minHeight: 72,
-      ),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.50),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: AppColors.orange.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: Icon(
-              icon,
-              size: 16,
-              color: AppColors.orange,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: AppColors.inkMuted,
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.4,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.ink,
-                    fontSize: 11,
-                    height: 1.25,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ],
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -938,8 +750,10 @@ class _MetaPill extends StatelessWidget {
         vertical: 10,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.78),
-        borderRadius: BorderRadius.circular(999),
+        color: AuraBento.surfaceWhite,
+        borderRadius:
+            BorderRadius.circular(AuraBento.radiusFull),
+        border: Border.all(color: AuraBento.surfacePillNeutralSolid),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -947,15 +761,15 @@ class _MetaPill extends StatelessWidget {
           Icon(
             icon,
             size: 15,
-            color: AppColors.cyan,
+            color: AuraBento.accentBlueAction,
           ),
           const SizedBox(width: 7),
           Text(
             text,
             style: const TextStyle(
-              color: AppColors.inkMuted,
+              color: AuraBento.textSecondary,
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

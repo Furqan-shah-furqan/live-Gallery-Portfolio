@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../core/app_theme.dart';
+import '../core/aura_bento.dart';
 import '../models/project_model.dart';
+import 'glass_surface.dart';
 
 class ProjectCard extends StatefulWidget {
   const ProjectCard({
@@ -27,7 +29,6 @@ class _ProjectCardState extends State<ProjectCard> {
   @override
   Widget build(BuildContext context) {
     final project = widget.project;
-    final scheme = Theme.of(context).colorScheme;
     final height = widget.compact ? 300.0 : 390.0;
 
     return MouseRegion(
@@ -47,24 +48,12 @@ class _ProjectCardState extends State<ProjectCard> {
             curve: const Cubic(0.22, 1, 0.36, 1),
             height: height,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(35),
-              color: scheme.surface.withOpacity(0.80),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: scheme.shadow.withOpacity(_hovered ? 0.84 : 0.58),
-                  blurRadius: _hovered ? 56 : 38,
-                  offset: const Offset(0, 22),
-                ),
-                if (_hovered)
-                  BoxShadow(
-                    color: scheme.primary.withOpacity(0.12),
-                    blurRadius: 56,
-                    spreadRadius: 2,
-                  ),
-              ],
+              borderRadius: BorderRadius.circular(AuraBento.radiusLg),
+              color: AuraBento.surfaceWhite,
+              boxShadow: AuraBento.ambientMd(const Color(0xFF111827)),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(35),
+              borderRadius: BorderRadius.circular(AuraBento.radiusLg),
               child: GestureDetector(
                 onTap: widget.onTap,
                 child: Stack(
@@ -81,7 +70,7 @@ class _ProjectCardState extends State<ProjectCard> {
                     ),
                     Positioned.fill(
                       child: Padding(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(AuraBento.space3),
                         child: _ProjectMedia(project: project),
                       ),
                     ),
@@ -107,9 +96,9 @@ class _ProjectCardState extends State<ProjectCard> {
                       ),
                     ),
                     Positioned(
-                      left: 24,
-                      right: 24,
-                      bottom: 22,
+                      left: AuraBento.space5 + AuraBento.opticalInset(AuraBento.radiusLg) - 4,
+                      right: AuraBento.space5 + AuraBento.opticalInset(AuraBento.radiusLg) - 4,
+                      bottom: AuraBento.space5,
                       child: AnimatedSlide(
                         offset: _hovered ? Offset.zero : const Offset(0, 0.04),
                         duration: const Duration(milliseconds: 560),
@@ -122,14 +111,14 @@ class _ProjectCardState extends State<ProjectCard> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: scheme.onSurface,
-                                fontSize: widget.compact ? 22 : 28,
-                                height: 1.02,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -1.2,
+                                color: AuraBento.textPrimary,
+                                fontSize: widget.compact ? 21 : 26,
+                                height: 1.06,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.5,
                               ),
                             ),
-                            const SizedBox(height: 9),
+                            const SizedBox(height: AuraBento.space2),
                             Row(
                               children: <Widget>[
                                 Flexible(
@@ -137,17 +126,17 @@ class _ProjectCardState extends State<ProjectCard> {
                                     project.techStack,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: scheme.onSurfaceVariant,
+                                    style: const TextStyle(
+                                      color: AuraBento.textSecondary,
                                       fontSize: 12,
-                                      fontWeight: FontWeight.w800,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 10),
-                                Icon(
+                                const SizedBox(width: AuraBento.space2),
+                                const Icon(
                                   Icons.arrow_outward_rounded,
-                                  color: scheme.onSurface,
+                                  color: AuraBento.textPrimary,
                                   size: 18,
                                 ),
                               ],
@@ -157,51 +146,22 @@ class _ProjectCardState extends State<ProjectCard> {
                       ),
                     ),
                     Positioned(
-                      top: 16,
-                      left: 16,
+                      top: AuraBento.space4,
+                      left: AuraBento.space4,
                       child: AnimatedOpacity(
-                        opacity: _hovered ? 1.0 : 0.85,
+                        opacity: _hovered ? 1.0 : 0.92,
                         duration: const Duration(milliseconds: 300),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.70),
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: const Color(0xFF00F0FF).withValues(alpha: 0.35),
-                              width: 1.0,
-                            ),
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                color: const Color(0xFF00F0FF).withValues(alpha: 0.25),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Icon(Icons.bolt_rounded, size: 12, color: Color(0xFF00F0FF)),
-                              SizedBox(width: 4),
-                              Text(
-                                'LIVE SYSTEM',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.0,
-                                ),
-                              ),
-                            ],
-                          ),
+                        child: const AuraBadge(
+                          text: 'LIVE SYSTEM',
+                          icon: Icons.bolt_rounded,
+                          variant: AuraBadgeVariant.amber,
                         ),
                       ),
                     ),
                     if (widget.deleteAction != null)
                       Positioned(
-                        top: 16,
-                        right: 16,
+                        top: AuraBento.space4 - 4,
+                        right: AuraBento.space4 - 4,
                         child: AnimatedOpacity(
                           opacity: _hovered ? 1 : 0,
                           duration: const Duration(milliseconds: 420),
@@ -209,11 +169,9 @@ class _ProjectCardState extends State<ProjectCard> {
                             tooltip: 'Delete project',
                             onPressed: widget.deleteAction,
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.white.withOpacity(0.92),
+                              backgroundColor: AuraBento.surfaceWhite,
                               foregroundColor: AppColors.danger,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                              shape: const CircleBorder(),
                             ),
                             icon: const Icon(Icons.delete_outline_rounded),
                           ),
@@ -237,17 +195,17 @@ class _ProjectMedia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     if (project.images.isNotEmpty) {
       final bytes = project.images.first.decodeBytes();
       if (bytes != null) {
         return Hero(
           tag: 'project-${project.id}',
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(
+              AuraBento.innerRadius(AuraBento.radiusLg, AuraBento.space3),
+            ),
             child: ColoredBox(
-              color: scheme.surface,
+              color: AuraBento.canvasLightSecondary,
               child: Image.memory(
                 bytes,
                 fit: BoxFit.contain,
@@ -264,7 +222,9 @@ class _ProjectMedia extends StatelessWidget {
     return Hero(
       tag: 'project-${project.id}',
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(
+          AuraBento.innerRadius(AuraBento.radiusLg, AuraBento.space3),
+        ),
         child: DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -280,7 +240,7 @@ class _ProjectMedia extends StatelessWidget {
                 right: -35,
                 child: _GlowOrb(
                   size: 190,
-                  color: scheme.secondary.withOpacity(0.42),
+                  color: Colors.white.withAlpha(150),
                 ),
               ),
               Positioned(
@@ -288,7 +248,7 @@ class _ProjectMedia extends StatelessWidget {
                 bottom: -55,
                 child: _GlowOrb(
                   size: 220,
-                  color: scheme.primary.withOpacity(0.34),
+                  color: Colors.white.withAlpha(110),
                 ),
               ),
               Center(
@@ -296,32 +256,26 @@ class _ProjectMedia extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Container(
-                      width: 82,
-                      height: 82,
+                      width: 80,
+                      height: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppColors.warmWhite.withOpacity(0.80),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            color: AppColors.softShadow.withOpacity(0.50),
-                            blurRadius: 30,
-                            offset: const Offset(0, 14),
-                          ),
-                        ],
+                        color: AuraBento.surfaceWhite,
+                        boxShadow: AuraBento.ambientMd(const Color(0xFF111827)),
                       ),
                       child: Icon(
                         _iconForProject(project),
-                        color: AppColors.ink,
-                        size: 36,
+                        color: AuraBento.textPrimary,
+                        size: 34,
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: AuraBento.space4),
                     Text(
                       project.techStack,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        color: AppColors.inkMuted,
-                        fontWeight: FontWeight.w800,
+                        color: AuraBento.textPrimary,
+                        fontWeight: FontWeight.w500,
                         fontSize: 12,
                         letterSpacing: 0.4,
                       ),
@@ -372,32 +326,33 @@ IconData _iconForProject(ProjectModel project) {
   return Icons.auto_awesome_rounded;
 }
 
+/// Aura mesh-card family fallbacks, keyed by project name.
 List<Color> _projectGradient(ProjectModel project) {
   final index = project.name.codeUnits.fold<int>(0, (sum, value) => sum + value) % 4;
   switch (index) {
     case 0:
       return <Color>[
-        const Color(0xFFFFF4EC),
-        const Color(0xFFFFC49D),
-        const Color(0xFFFF6C82),
+        const Color(0xFFFFF1E8),
+        const Color(0xFFFFC9A8),
+        const Color(0xFFB9C0FF),
       ];
     case 1:
       return <Color>[
-        const Color(0xFFFFE7DF),
-        const Color(0xFFFFA36F),
-        const Color(0xFFF64A76),
+        const Color(0xFFFFE9DC),
+        const Color(0xFFFFB28F),
+        const Color(0xFF9FAEFF),
       ];
     case 2:
       return <Color>[
-        const Color(0xFFFFF0F3),
-        const Color(0xFFFF9BAE),
-        const Color(0xFFFF6F67),
+        const Color(0xFFF2EEFF),
+        const Color(0xFFD9CBFA),
+        const Color(0xFFFFC9A8),
       ];
     default:
       return <Color>[
-        const Color(0xFFFFF3E7),
-        const Color(0xFFFFB66F),
-        const Color(0xFFE93B6F),
+        const Color(0xFFEFF3FF),
+        const Color(0xFFC3CDFB),
+        const Color(0xFFFFB28F),
       ];
   }
 }
