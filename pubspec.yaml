@@ -25,6 +25,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/cinematic-hero.png
+    - assets/images/hero/
 
   # Aura-Bento typography (§2.2): Inter for interface chrome,
   # Instrument Serif for conversational display headlines.

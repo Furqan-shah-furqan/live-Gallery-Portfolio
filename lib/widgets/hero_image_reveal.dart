@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -27,13 +28,12 @@ class HeroImageReveal extends StatefulWidget {
 
 class _HeroImageRevealState extends State<HeroImageReveal>
     with SingleTickerProviderStateMixin {
-  /// Asset paths, bottom → top. Ship files here and register them in
-  /// pubspec.yaml to activate the layered reveal.
-  static const List<String> _assetPaths = <String>[
-    'assets/images/hero/hero_sand.png',
-    'assets/images/hero/hero_red.png',
-    'assets/images/hero/hero_blue.png',
-  ];
+  /// Layered hero plates live in `assets/images/hero/`. Any three images
+  /// dropped into that folder activate the reveal — no code change needed.
+  /// Files are classified by filename keywords (blue/snow → top, red →
+  /// middle, everything else → base); ties fall back to alphabetical order.
+  static const String _heroAssetDir = 'assets/images/hero/';
+  static final RegExp _imageExt = RegExp(r'\.(png|jpg|jpeg|webp)$');
 
   final List<ui.Image?> _layers = <ui.Image?>[null, null, null];
   final Stopwatch _clock = Stopwatch()..start();
@@ -70,22 +70,48 @@ class _HeroImageRevealState extends State<HeroImageReveal>
   }
 
   Future<void> _loadImages() async {
-    for (var i = 0; i < _assetPaths.length; i++) {
-      try {
-        final data = await rootBundle.load(_assetPaths[i]);
+    try {
+      final manifest = await rootBundle.loadString('AssetManifest.json');
+      final assets = jsonDecode(manifest) as Map<String, dynamic>;
+      final paths = assets.keys
+          .where((path) =>
+              path.startsWith(_heroAssetDir) && _imageExt.hasMatch(path))
+          .toList()
+        ..sort(_comparePlateOrder);
+
+      if (paths.length < 3) {
+        if (mounted) setState(() => _unavailable = true);
+        return;
+      }
+
+      for (var i = 0; i < 3; i++) {
+        final data = await rootBundle.load(paths[i]);
         final codec = await ui.instantiateImageCodec(
           data.buffer.asUint8List(),
         );
         final frame = await codec.getNextFrame();
         if (!mounted) return;
         setState(() => _layers[i] = frame.image);
-      } catch (_) {
-        if (!mounted) return;
-        setState(() => _unavailable = true);
-        return;
       }
+      if (mounted) setState(() => _loaded = true);
+    } catch (_) {
+      if (mounted) setState(() => _unavailable = true);
     }
-    if (mounted) setState(() => _loaded = true);
+  }
+
+  /// Sort order bottom → top: base tier (no keyword) → red tier → blue tier.
+  int _comparePlateOrder(String a, String b) {
+    final tierA = _plateTier(a);
+    final tierB = _plateTier(b);
+    if (tierA != tierB) return tierA.compareTo(tierB);
+    return a.compareTo(b);
+  }
+
+  int _plateTier(String path) {
+    final name = path.toLowerCase();
+    if (name.contains('blue') || name.contains('snow')) return 2;
+    if (name.contains('red')) return 1;
+    return 0;
   }
 
   void _tick(Duration elapsed) {
